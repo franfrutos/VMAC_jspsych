@@ -211,7 +211,7 @@ const welcome = {
     type: jsPsychHtmlButtonResponse,
     stimulus: wrapper(`
     <p style="margin-bottom: 2rem;">¡Binevenida/o al experimento!</p>
-    <p>Antes de empezar, es necesario que realices este experimento en una <b>habituación tenuamente iluminada</b>, con el menor número de distracciones posible: <b>apague el teléfono (o póngalo en silencio)</b>.</p>
+    <p>Antes de empezar, es necesario que realices este experimento en una <b>habitación tenuamente iluminada</b>, con el menor número de distracciones posible: <b>apagua el teléfono (o ponlo en silencio)</b>.</p>
     <p style="margin-bottom: 2rem;"><b>No cierres ni recarges esta página hasta que se te indique que el experimento ha finalizado</b>.</p>
     <p style="margin-bottom: 3rem;">Una vez te asegures de cumplir con lo expresado arriba, pulsa <b>continuar</b> para empezar.</p>`),
     choices: ['continuar']
@@ -441,12 +441,18 @@ const check = {
     minimum_height: 600,
     window_resize_message: `
     <p>La ventana de tu navegador es demasiado pequeña para completar este experimento. Por favor, maximiza el tamaño de la ventana de tu navegador. Si la ventana de tu navegador ya tiene su tamaño máximo, no podrás acceder al experimento.</p>
-    <p>La anchura minima de la ventana es de <span id="browser-check-min-width"></span> px.</p>
+    <p>La anchura mínima de la ventana es de <span id="browser-check-min-width"></span> px.</p>
     <p>La anchura de tu ventana es de <span id="browser-check-actual-width"></span> px.</p>
     <p>La altura mínima de la ventana es de <span id="browser-check-min-height"></span> px.</p>
     <p>La altura de tu ventana es de <span id="browser-check-actual-height"></span> px.</p>`,
     resize_fail_button_text: `No puedo ajustar la pantalla`,
-    exclusion_message: () => {
+    inclusion_function: (data) => {
+        return !data.mobile
+      },
+      exclusion_message: (data) => {
+        if(data.mobile){
+          return '<p>Debes hacer el experimento en un ordenador o un portátil,</p> <p>Puedes cerrar esta página cuando quieras.</p>';
+        }
         return `<p>No cumples con los requisitos para participar en este experimento.</p> <p>Puedes cerrar esta página cuando quieras.</p>`
     },
 };
