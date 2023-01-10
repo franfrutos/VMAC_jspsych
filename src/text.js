@@ -75,9 +75,9 @@ const line = (ctx, x, y, r, color, mode) => {
     ctx.lineWidth = 3;
     let fromx, fromy, tox, toy;
     if (mode == "r"){
-        const rnum = random(0, 2);
-        [fromx, fromy] = (rnum) ? [x-r/2, y+r/2] : [x-r/2, y-r/2];
-        [tox, toy] = (rnum) ? [x+r/2, y-r/2] : [x+r/2, y+r/2];
+        const theta = radians([45,135][random(0, 2)]);
+        [fromx, fromy] = [(-r/2 * Math.cos(theta)) + x, (-r/2 * Math.sin(theta)) + y];
+        [tox, toy] = [(r/2 * Math.cos(theta)) + x, (r/2 * Math.sin(theta)) + y];
     } else if (mode == "h") {
         [fromx, fromy] = [x-r/2, y];
         [tox, toy] = [x+r/2, y]
@@ -160,8 +160,9 @@ const exp_c = () => {
             }
         }
     }
-    if (c == null) state = true;
-    state = false;
+    if (c) state = true;
+    else state = false;
+    console.log(state)
 }
 
 const prac_c = () => {
