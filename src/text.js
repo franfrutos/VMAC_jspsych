@@ -231,8 +231,8 @@ const instructions_cal = {
         puedas en la pantalla de tu ordenador. Es importante que adoptes una postura cómoda, ya que vas a tener que mantenerte en esa posición durante un tiempo.</p>`),
         wrapper(`<p>La calibración va a tener dos fases. En primer lugar, no podemos presentarte un estímulo de un tamaño determinado si no conocemos el tamaño de los pixeles de tu ordenador. </p>
         <p>Una forma sencilla de calcular esa correspondiencia consiste en pedirte que ajustes un objeto presentado por pantalla a un objeto real con un tamaño conocido. Para ello, servirán tarjetas de tamaño estandarizado como lo son tarjetas de crédito/débito, carnét de conducir, DNI o la tarjeta universitaria.</p>
-        <div id="item" style="border: none; height: 100px; width: 200px; background-color: #ddd; position: relative; background-image: url('src/dni.jpg'); background-size: 100% auto; background-repeat: no-repeat;">
-            <div id="jspsych-resize-handle" style="cursor: nwse-resize; background-color: none; width: 50px; height: 50px; border: 5px solid red; border-left: 0; border-top: 0; position: absolute; bottom: 0; right: 0;">
+        <div id="item" style="border: none; height: ${(53/85.6)*200}px; width: 200px; background-color: #ddd; position: relative; background-image: url('src/dni.jpg'); background-size: 100% auto; background-repeat: no-repeat;">
+            <div id="jspsych-resize-handle" style="cursor: nwse-resize; background-color: none; width: 25px; height: 25px; border: 5px solid red; border-left: 0; border-top: 0; position: absolute; bottom: 0; right: 0;">
             </div>
         </div>
         <p>Tal cuál se presenta arriba, podrás ajustar el tamaño del rectángulo a una de las tarjetas antes mencionadas. En caso de que no tengas ninguna tarjeta, también es posible utilizar una regla. En el caso de utilizar una regla el rectángulo deberá tener una anchura de 85.6 milímetros.</p>`),
