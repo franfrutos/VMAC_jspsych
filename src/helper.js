@@ -348,7 +348,7 @@ const jsPsych = initJsPsych({
 });
 
 const urlvar = jsPsych.data.urlVariables();
-const norew = (urlvar.blocks != undefined)? capitalize(urlvar.phase): "Extinction";
+const norew = (urlvar.phase != undefined)? capitalize(urlvar.phase): "Extinction";
 const blocks = Number(urlvar.blocks) || 12;
 const prac = (urlvar.blocks == 0 && urlvar.blocks != undefined)? false : urlvar.prac != "false" && true;
 const trialObj = create_trials(blocks, norew, prac);
