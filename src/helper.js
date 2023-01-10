@@ -344,7 +344,7 @@ const jsPsych = initJsPsych({
 
 const urlvar = jsPsych.data.urlVariables();
 const norew = urlvar.phase || "Extinction"
-const prac = (urlvar.blocks == "0")? false : urlvar.prac != "false" && true;
+const prac = (!Number(urlvar.blocks))? false : urlvar.prac != "false" && true;
 const blocks = Number(urlvar.blocks) || 12;
 const trialObj = create_trials(blocks, norew, prac);
 const [colorHigh, colorLow] = (blocks != 0)? trialObj["Reward"][1].colors: ["orange", "blue"];
