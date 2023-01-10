@@ -447,11 +447,11 @@ const check = {
     <p>La altura de tu ventana es de <span id="browser-check-actual-height"></span> px.</p>`,
     resize_fail_button_text: `No puedo ajustar la pantalla`,
     inclusion_function: (data) => {
-        return !data.mobile
+        return data.mobile == false;
       },
       exclusion_message: (data) => {
         if(data.mobile){
-          return '<p>Debes hacer el experimento en un ordenador o un portátil,</p> <p>Puedes cerrar esta página cuando quieras.</p>';
+          return '<p>Debes hacer el experimento en un ordenador o un portátil.</p> <p>Puedes cerrar esta página cuando quieras.</p>';
         }
         return `<p>No cumples con los requisitos para participar en este experimento.</p> <p>Puedes cerrar esta página cuando quieras.</p>`
     },
@@ -490,7 +490,6 @@ const questions = {
     <p style="display: block; margin-bottom: 50px">Una vez que hayas respondido a las preguntas, pulsa <b>terminar</b> para salir del experimento.</p>`,
     button_label: "Terminar",
     on_finish: (data) => {
-        console.log(data.response["opinion"])
         if (jatos_run) {
             const results = jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).csv();
             jatos.submitResultData(results);
