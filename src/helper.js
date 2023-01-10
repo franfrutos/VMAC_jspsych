@@ -337,13 +337,18 @@ const formatting = (x) => {
     return inte + decimal;
 }
 
+const capitalize = (string) => {
+    let lower = string.toLowerCase();
+    return lower[0].toUpperCase() + lower.slice(1);
+}
+
 // Initialize jsPsych
 const jsPsych = initJsPsych({
 
 });
 
 const urlvar = jsPsych.data.urlVariables();
-const norew = urlvar.phase || "Extinction"
+const norew = capitalize(urlvar.phase) || "Extinction"
 const blocks = Number(urlvar.blocks) || 12;
 const prac = (urlvar.blocks == 0 && urlvar.blocks != undefined)? false : urlvar.prac != "false" && true;
 const trialObj = create_trials(blocks, norew, prac);
