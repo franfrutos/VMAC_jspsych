@@ -1,222 +1,234 @@
-
-// Initialize jsPsych
-const jsPsych = initJsPsych({
-    on_finish: () => {
-        jsPsych.data.displayData();
-    }
-});
-
 // Run in JATOS server?
 const jatos_run = window.jatos !== undefined || false;
 
 const timeline = [];  
 
-let verticalCount = 0; let trialNum = 0; let check_Num = 0;
+let trialNum = 0;
 
-const welcome = {
-    type: jsPsychHtmlButtonResponse,
-    stimulus: "<p>Experiment under construction.</p></br>",
-    choices: ['Continue']
-};
-
-timeline.push(welcome);
-
-// Instructions
-const instructions1 = {
-    type:jsPsychInstructions,
-    pages: [
-        '<p>This is an example of instruction page. Press the left arrow to continue.</p>',
-        '<p>This is another page of the instructions.</p>',
-        '<p>Now, You have to do the virtual chin-rest.</p>'
-    ]
-}
-
-const instructions2 = {
-    type:jsPsychInstructions,
-    pages: [
-        '<p>This is an example of instruction page before the experiment begins. Press the left arrow to continue.</p>',
-        '<p>This is another page of the instructions.</p>',
-        `<p><strong>Press C</strong> if you see a horizontal line inside the different shape.</p></br>
-        <p><strong>Press F</strong> if you see a vertical line inside the different shape.</p></br>
-        <p>Press the left arrow to start the experiment</p>`
-    ],
-    data: () => {
-        // We need to save the scaling factor in every trial
-        const sF  = jsPsych.data.get().last(1).values()[0].px2deg;
-        return {
-            px2deg: sF,
-        }
-    },
-    on_finish: () => {
-        //Fade to black transition
-        document.body.classList.add("black");
-        document.body.style.cursor = 'none';
-    },
-    post_trial_gap: 2000,
-}
-// Virtual chin-rest
-const resize = {
-    type: jsPsychVirtualChinrest,
-    blindspot_reps: 3,
-    resize_units: "none",
-    post_trial_gap: 2000,
-};
-
-
-const full_on = {
-    type: jsPsychFullscreen,
-    fullscreen_mode: true,
-    //message: "<p>Antes de empezar, pulsa el botón para entrar en modo pantalla completa.</p>",
-    button_label: "Enter fullscreen mode",
-};
-
-    const full_off = {
-    type: jsPsychFullscreen,
-    fullscreen_mode: false,
-  };
-
-
-    // Experimental trial
+// Experimental trial
 
 const trial = {
     type: jsPsychPsychophysics,
     stimuli: () => {
         const sF  = jsPsych.data.get().last(1).values()[0].px2deg;
-        const targetPos = jsPsych.timelineVariable("targetPos");
-        const singPos = jsPsych.timelineVariable("singPos");
-        const dimension = jsPsych.timelineVariable("dimension");
+        const log = jsPsych.timelineVariable("trialLog");
         // Stimulus size is determined to an scaling factor that transform pixels to degrees of visual angle
-        return draw_display(1*sF, 0.1*sF, 4*sF, dimension, targetPos, singPos, jsPsych.timelineVariable("orientation"));
+        return draw_display(1.15*sF, 0.1*sF, 5.05*sF, log, jsPsych.timelineVariable("colors"), jsPsych.timelineVariable("orientation"));
     },
-    choices: ['f', 'c'], 
+    choices: ['g', 'c'], 
     background_color: '#000000',
     canvas_width: () => {
         const sF  = jsPsych.data.get().last(1).values()[0].px2deg;
-        return sF*11;
+        return sF*15;
     },
     canvas_height: () => {
         const sF  = jsPsych.data.get().last(1).values()[0].px2deg;
-        return sF*11;
+        return sF*15;
     },
     data: () => {
-        const sPos = jsPsych.timelineVariable("singPos")
         return {
-            px2deg: jsPsych.data.get().last(1).values()[0].px2deg,
             tPos: jsPsych.timelineVariable("targetPos"),
-            sPos: sPos,
-            counterbalance: jsPsych.timelineVariable("dimension"),
-            condition: (sPos < 0)? "Absent": (sPos === HPDL) ? "HPDL": "LPDL",
-            verticalCount: (jsPsych.timelineVariable("orientation") == "vertical") ? verticalCount++: verticalCount,
-            check: jsPsych.timelineVariable("WMcheck"),
+            sPos: jsPsych.timelineVariable("singPos"),
+            Phase: jsPsych.timelineVariable("Phase"),
+            condition: jsPsych.timelineVariable("condition"),
             trial_num: ++trialNum,
-            check_Num: (jsPsych.timelineVariable("WMcheck") == "yes")? ++check_Num : check_Num,
         }
     },
     on_finish: (data) => {
-        data.correct_response = (jsPsych.timelineVariable("orientation") == "vertical") ? "f":"c";
+        data.correct_response = (jsPsych.timelineVariable("orientation") == "vertical") ? "g":"c";
         data.correct = (jsPsych.pluginAPI.compareKeys(data.response, data.correct_response))? 1: 0;
-        // Resetting line counter
-        console.log(data);
+        data.points = (data.correct)? 
+        compute_points(data.rt, data.condition, data.Phase):
+        -compute_points(data.rt, data.condition, data.Phase);
     },
-    post_trial_gap: 500 + Math.floor(Math.random()*201),
-    trial_duration: 3500,
-    response_start_time: 500,
+    //post_trial_gap: 500 + Math.floor(Math.random()*201),
+    trial_duration: 3200,
+    response_start_time: 1200,
 };
 
-const WMtrial = {
+
+const feedback = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: () => {
-        const checkNum = jsPsych.data.get().last(1).values()[0].check_Num;
-        const correct = shuffle([true, false])[0];
-        const line = shuffle(["vertical", "horizontal"])[0];
-        let num;
-        const check_length = (WMlog[checkNum - 2] !== undefined)? WMlog[checkNum - 1] - WMlog[checkNum - 2] : WMlog[checkNum - 1];
-        const numV = jsPsych.data.get().last(1).values()[0].verticalCount;
-        const numH = Math.abs(check_length - numV);
-        console.log(check_length);
-        console.log(correct, line)
-        if (correct && line === "vertical") {
-            num = numV;
-        } else if (correct && line === "horizontal") {
-            num = numH;
-        } else if (!correct && line === "vertical") {
-            num = random(0, check_length, [numV]);
-        } else {
-            num = random(0, check_length, [numH]);
+        const response = jsPsych.data.get().last(1).values()[0].key_press;
+        if (response !== null) {
+            const acc = jsPsych.data.get().last(1).values()[0].correct;
+            if (jsPsych.timelineVariable("Phase") == "Practice" || jsPsych.timelineVariable("Phase") == "Extinction") {
+                return (acc)? `<p style="color: yellow; font-size: 2rem;">Correcto</p>`:
+                `<p style="color: red; font-size: 2rem;">Error</p>`;
+            }
+            const cond_bonus = (jsPsych.timelineVariable("Phase") == "Reward")? "High": "Low";
+            const bonus = (jsPsych.timelineVariable("condition") == cond_bonus) ? 
+            '<div style="background-color: yellow; color: black; font-size: 2rem; font-weight: 600; padding: 40px;">¡Puntos Extra!</div></br>': 
+            '<div></div></br>';
+            const points = jsPsych.data.get().last(1).values()[0].points;
+            const gains = (acc)? 
+            `<p style="color: yellow; font-size: 2rem;">+${points} puntos</p>`:
+            `<p style="color: red; font-size: 2rem;">ERROR: ${points} puntos</p>`
+            return bonus + gains;
         }
-
-        return `
-        <p>The number of ${line} lines was: ${num}</p></br>
-        <p>y/n</p>
-        `
+        return "<p style='font-size: 2rem;'>Demsisado lento. Intenta responder más rápido.</p>"
     },
-    choices: ['y', 'n'],
+    post_trial_gap: () => {
+        const phase = jsPsych.data.get().last(1).values()[0].Phase;
+        if ((phase == "Practice" && trialNum == 24) || (phase != "Reward" && trialNum == (24*blocks)*2)) return 1000
+    },
     data: () => {
-        const sPos = jsPsych.timelineVariable("singPos")
         return {
-            px2deg: jsPsych.data.get().last(1).values()[0].px2deg,
-            tPos: jsPsych.timelineVariable("targetPos"),
-            sPos: sPos,
-            counterbalance: jsPsych.timelineVariable("dimension"),
-            condition: (sPos < 0)? "Absent": (sPos === HPDL) ? "HPDL": "LPDL",
-            verticalCount: (jsPsych.timelineVariable("orientation") == "vertical") ? verticalCount++: verticalCount,
-            check: jsPsych.timelineVariable("WMcheck"),
-            trial_num: trialNum
+            trial_num: trialNum,
         }
     },
-    on_finish: () => {
-        verticalCount = (jsPsych.timelineVariable("WMcheck") === "yes") ? 0 : verticalCount;
-        jsPsych.data.get().last(1).values()[0].verticalCount.verticalCount = verticalCount;
-    }
+    trial_duration: 700,
+    choices: ["NO_KEYS"],
 }
 
 const rest = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: () => {
         return `
-        <p>You have completed an experimental block</p></br>
-        <p>Press the space bar to continue</p>
+        <p>Has terminado un bloque experimental.</p></br>
+        <p>Pulsa la barra espaciadora cuando quieras continuar con el siguiente.</p>
          `
     },
     choices: [' '],
-    data: () => {
-        const sPos = jsPsych.timelineVariable("singPos")
-        return {
-            px2deg: jsPsych.data.get().last(1).values()[0].px2deg,
-            tPos: jsPsych.timelineVariable("targetPos"),
-            sPos: sPos,
-            counterbalance: jsPsych.timelineVariable("dimension"),
-            condition: (sPos < 0)? "Absent": (sPos === HPDL) ? "HPDL": "LPDL",
-            verticalCount: (jsPsych.timelineVariable("orientation") == "vertical") ? verticalCount++: verticalCount,
-            check: jsPsych.timelineVariable("WMcheck"),
+    on_finish: () => {
+        if (jatos_run) {
+            const results = jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).csv();
+            jatos.submitResultData(results);
         }
     }
 }
 
-// Conditional show wm check and between bloocks rests
-const if_nodeWM = {
-    timeline: [WMtrial],
-    conditional_function: () => {
-        return (jsPsych.timelineVariable("WMcheck") == "yes");
+const transition = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: () => {
+        if (norew == "Reversal") {
+            return `<p>Has termnado la primera mitad del experimento.</p>
+            <p>A partir de ahora van a cambiar las reglas que determinan los puntos que puedes ganar:</p>
+            <p>Si aparece el color ${colors_t(colorLow)}, ganarás 10 veces más puntos.</p>
+            <p>Si aparece el color ${colors_t(colorHigh)}, no ganarás puntos extra.</p></br>
+            <p>Pulsa la barra espaciadora para continuar con el experimento.</p>`
+        }
+        return `<p>Has termnado la primera mitad del experimento.</p>
+        <p>Ahora vas a continuar con la tarea, <b style = "color:red"> pero ya no ganarás más puntos</b>.</p></br>
+        <p>Pulsa la barra espaciadora para continuar.</p>`
     },
+    choices: [" "],
+    on_finish: () => {
+        if (jatos_run) {
+            const results = jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).csv();
+            jatos.submitResultData(results);
+        }
+        if (blocks == 0) {
+            document.body.classList.remove("black");
+            document.body.style.cursor = 'auto';
+        }
+    }
 }
 
+// Conditional 
 const if_nodeRest = {
     timeline: [rest],
         conditional_function: () => {
         const current_trial = jsPsych.data.get().last(1).values(0)[0].trial_num;
-        return current_trial % 120 == 0 && current_trial != 720;
+        return (current_trial % 24 == 0 && current_trial != 24*blocks) && (current_trial % 24 == 0 && current_trial != (24*blocks)*2);
     },
 }
 
-
-const procedure = {
-    timeline: [trial, if_nodeWM, if_nodeRest],
-    timeline_variables: trialObj,
+const reward = {
+    timeline: [trial, feedback, if_nodeRest],
+    timeline_variables: (blocks != 0)? trialObj.Reward: [],
     repetitions: 1,
     randomize_order: false,
 }
 
-timeline.push(instructions1, full_on, resize, instructions2, procedure, full_off);
+const noreward = {
+    timeline: [trial, feedback, if_nodeRest],
+    timeline_variables: (blocks != 0)? trialObj[norew]: [],
+    repetitions: 1,
+    randomize_order: false,
+}
+
+const if_reward = {
+    timeline: [reward],
+    conditional_function: () => {
+        return blocks != 0;
+    }
+}
+
+const if_noreward = {
+    timeline: [noreward],
+    conditional_function: () => {
+        return blocks != 0;
+    }
+}
+
+const practice = {
+    timeline: [trial, feedback],
+    timeline_variables: (blocks != 0)? trialObj.Practice: [],
+    repetitions: 1,
+    randomize_order: false,
+}
+
+const if_practice = {
+    timeline: [practice],
+    conditional_function: () => {
+        return prac;
+    }
+}
+
+const procedure_cal = {
+    timeline: [welcome, instructions_cal, full_on, resize],
+    repetitions: 1,
+    randomize_order: false,
+}
+
+const procedure_prac = {
+    timeline: [instructions_prac, pre_prac, if_practice],
+    repetitions: 1,
+    randomize_order: false,
+    post_trial_gap: () => {if (prac == false) return 1000},
+    on_finish: (data) => {
+        if (data.trial_num == 24 ||prac == false) {
+            document.body.classList.remove("black");
+            document.body.style.cursor = 'auto';
+            trialNum = 0;
+        }
+    }
+}
+
+const procedure_exp = {
+    // Pre_no: aquí, el contenido va a variar en función de la fase especificada.
+    timeline: [instructions_exp, pre_exp, if_reward, transition, if_noreward],
+    repetitions: 1,
+    randomize_order: false,
+    //post_trial_gap: 1000,
+    on_finish: (data) => {
+        if (data.trial_num == (24*blocks)*2) {
+            document.body.classList.remove("black");
+            document.body.style.cursor = 'auto';    
+        }
+    }
+}
+
+const download = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `<p>¿Quieres descargar los datos?</p>`,
+    choices: ["Sí", "No"],
+    on_finish: (data) => {
+        if (data.response == 0) {
+            jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).localSave("csv", "example.csv");
+        }
+    }
+}
+
+const if_download = {
+    timeline: [download],
+    conditional_function: () => {
+        return !jatos_run;
+    }
+}
+
+timeline.push(check, procedure_cal, procedure_prac, procedure_exp, full_off, report, questions, if_download);
 
 jsPsych.run(timeline);
