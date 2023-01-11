@@ -228,24 +228,24 @@ const instructions_cal = {
         <p>Dado que la tarea se hace online, no hay forma de controlar a qué distancia te encuentras de la pantalla. 
         Por tanto, no podemos saber cómo percibirás los estímulos que te vamos a presentar. La calibración servirá para estimar
          a qué distancia te encuentras de la pantalla del ordenador, y así poder ajustar los estímulos para que su tamaño percibido sea similar para todas las personas que realizen el experimento.</p>
-        <p>Antes de empezar con la calibración, asegurate de adoptar una posición que te permita extender las manos al teclado con comodidad. Además, debes intentar centrarte lo máximo que
-        puedas en la pantalla de tu ordenador. Es importante que adoptes una postura cómoda, ya que vas a tener que mantenerte en esa posición durante un tiempo.</p>`),
+        <p>Antes de empezar con la calibración, <b>asegurate de adoptar una posición que te permita extender las manos al teclado con comodidad</b>. Además, <b>debes intentar centrarte lo máximo que
+        puedas en la pantalla de tu ordenador</b>. Es importante que adoptes una postura cómoda, ya que vas a tener que mantenerte en esa posición durante un tiempo.</p>`),
         wrapper(`<p>La calibración va a tener dos fases. En primer lugar, no podemos presentarte un estímulo de un tamaño determinado si no conocemos el tamaño de los pixeles de tu ordenador. </p>
         <p>Una forma sencilla de calcular esa correspondiencia consiste en pedirte que ajustes un objeto presentado por pantalla a un objeto real con un tamaño conocido. Para ello, servirán tarjetas de tamaño estandarizado como lo son tarjetas de crédito/débito, carnét de conducir, DNI o la tarjeta universitaria.</p>
         <div id="item" style="border: none; height: ${(53/85.6)*200}px; width: 200px; background-color: #ddd; position: relative; background-image: url('src/dni.jpg'); background-size: 100% auto; background-repeat: no-repeat;">
             <div id="jspsych-resize-handle" style="cursor: nwse-resize; background-color: none; width: 25px; height: 25px; border: 5px solid red; border-left: 0; border-top: 0; position: absolute; bottom: 0; right: 0;">
             </div>
         </div>
-        <p>Tal cuál se presenta arriba, podrás ajustar el tamaño del rectángulo a una de las tarjetas antes mencionadas. En caso de que no tengas ninguna tarjeta, también es posible utilizar una regla. En el caso de utilizar una regla el rectángulo deberá tener una anchura de 85.6 milímetros.</p>`),
-        wrapper(`<p>Por último, en la segunda fase vamos a realizar una pequeña prueba para estimar dónde se encuentra tu punto ciego visual. El punto ciego es una región de la retina donde realmente no hay visión, sin embargo, dado que solemos utilizar los dos ojos, el rango de visión que percibimos suele ser completo.</p>
+        <p>Tal cual se presenta arriba, podrás ajustar el tamaño del rectángulo a una de las tarjetas antes mencionadas. En caso de que no tengas ninguna tarjeta, también es posible utilizar una regla. En el caso de utilizar una regla la anchura de la tarjeta deberá ser de de 85.6 milímetros.</p>`),
+        wrapper(`<p>Por último, en la segunda fase vamos a realizar una pequeña prueba para estimar dónde se encuentra tu punto ciego visual. El punto ciego es una región de la retina donde realmente no hay visión, sin embargo, no solemos ser conscientes de su existencia dado que el punto ciego de un ojo suele quedar oculto por el rango de visión del otro.</p>
         <p>La posición del punto ciego va a variar en función de la distancia a la que te encuentres de la pantalla. Por eso, esta prueba es tan importante, ya que es la que nos va a permitir estimar a que distancia te encuntras.</p>
         <p>Para que puedas practicar un poco, prueba lo siguiente:</p>
         <ol style="max-width:90%;">
         <li>Pon la mano izquierda en la <b>barra espaciadora</b>.</li>
         <li>Tápate el ojo derecho con la mano derecha.</li>
         <li>Atiende al cuadrado negro con el ojo izquierdo. No dejes de mirarlo.</li>
-        <li>Pulsa la barra espaciadora y el <b style = "color:red;">círculo rojo</b> comenzará a moverse. </li>
-        <li>Pulsar la barra espaciadora cuando percibas que el círculo desaparece.</li>
+        <li>Cuando pulses la barra espaciadora el <b style = "color:red;">círculo rojo</b> comenzará a moverse. </li>
+        <li>Pulsa la barra espaciadora cuando percibas que el círculo desaparece.</li>
         </ol>
         <div id="virtual-chinrest-circle" style="position: absolute;background-color: #f00; width: 30px; height: 30px; border-radius:50px;"></div>
         <div id="virtual-chinrest-square" style="position: absolute;background-color: #000; width:30px; height:30px"></div>
@@ -277,17 +277,17 @@ const instructions_exp = {
     pages: [
         wrapper(`<p>Has terminado la práctica, ¡muy bien!</p>
         <p>En el experimento van a cambiar unas pocas cosas respecto a lo que has hecho en la práctica.</p>
-        <p>En primer lugar, en función de tu desempeño en la tarea podras ganar o perder una determinada cantidad de puntos en cada ensayo. Si respondes correctamente ganarás puntos, mientras que si fallas perderás puntos. Por otro lado, si respondes rápido ganarás o perderás más puntos, pero si tardas en responder la cantidad de puntos que ganes o pierdas disminuirá. Si tardas demasiado en responder no ganarás o perderás puntos. </p>
+        <p>En primer lugar, en función de tu desempeño en la tarea <b>podrás ganar o perder una determinada cantidad de puntos</b> en cada ensayo. Si respondes correctamente ganarás puntos, mientras que si fallas perderás puntos. Por otro lado, si respondes rápido ganarás o perderás más puntos, pero si tardas en responder la cantidad de puntos que ganes o pierdas disminuirá. Si tardas demasiado en responder no ganarás o perderás puntos. </p>
         <p>Para maximizar la cantidad de puntos que es posible obtener, intenta responder lo más rápido que puedas sin cometer errores.</p>`),
-        wrapper(`<p>Otra cosa que va a cambiar en el experimento es que en algunos ensayos uno de los círculos que acompañan al diamante pordrá aparecer en otro color. Los colores en los que puede aparecer el círculo son <b>${colors_t(colorHigh)}</b> y <b>${colors_t(colorLow)}</b>.</p>
+        wrapper(`<p>Otra cosa que va a cambiar en el experimento es que en algunos ensayos uno de <b>los círculos que acompañan al diamante pordrá aparecer en otro color</b>. Los colores en los que puede aparecer el círculo son <b>${colors_t(colorHigh)}</b> y <b>${colors_t(colorLow)}</b>.</p>
         <div style = "display: flex; flex-direction: row; justify-content: space-around; margin: 30px auto;">
         <canvas id="myCanvas1" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
         <canvas id="myCanvas2" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
         </div>
-        <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que trata de ignorar el color de los círculos.</p>`),
-        wrapper(`<p>No obstante, el color de los círculos también influirá en la cantidad de puntos que puedas ganar.</p>
-        <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b>, se considerara ese ensayo como un ensayo bonus, por lo que ganarás (o perderás) 10 veces más puntos.</p>
-        <p>En el caso de que uno de los círculos aparezca de color <b>${colors_t(colorLow)}</b>, no ganarás puntos extra.</p>`),
+        <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
+        wrapper(`<p>No obstante, <b>el color de los círculos también influirá en la cantidad de puntos que puedas ganar</b>.</p>
+        <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b>, se considerara ese ensayo como un ensayo bonus, por lo que <b>ganarás (o perderás) 10 veces más puntos</b>.</p>
+        <p>En el caso de que uno de los círculos aparezca de color <b>${colors_t(colorLow)}</b>, <b>no ganarás puntos extra</b>.</p>`),
         wrapper(`<p>Ahora va a empezar al experimento.</p>
         <p>Si quieres repasar las instrucciones, pulsa <b>retroceder</b>. Si quieres continuar, pulsa <b>seguir</b>.`, true),
     ],
@@ -390,11 +390,11 @@ const resize = {
     <li>Pon la mano izquierda en la <b>barra espaciadora</b>.</li>
     <li>Tápate el ojo derecho con la mano derecha.</li>
     <li>Atiende al cuadrado negro con el ojo izquierdo. No dejes de mirarlo.</li>
-    <li>Pulsa la barra espaciadora y el <b style = "color:red;">círculo rojo</b> comenzará a moverse. </li>
-    <li>Pulsar la barra espaciadora cuando percibas que el círculo desaparece.</li>
+    <li>Cuando pulses la barra espaciadora el <b style = "color:red;">círculo rojo</b> comenzará a moverse. </li>
+    <li>Pulsa la barra espaciadora cuando percibas que el círculo desaparece.</li>
     </div>
     </ol>
-    <p style = "margin-bottom: 20px;">Pulsa la barra espaciadora para empezar.</p>`,
+    <p style = "margin-bottom: 30px;">Pulsa la barra espaciadora para empezar.</p>`,
     blindspot_measurements_prompt: `repeticiones pendientes: `,
     on_finish: (data) => {
         jsPsych.data.addProperties({px2deg: data.px2deg,
