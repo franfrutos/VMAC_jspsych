@@ -35,6 +35,7 @@ const trial = {
         }
     },
     on_finish: (data) => {
+        //TODO: crear una variable con la cantidad total de puntos obtenidos
         data.correct_response = (jsPsych.timelineVariable("orientation") == "vertical") ? "g":"c";
         data.correct = (jsPsych.pluginAPI.compareKeys(data.response, data.correct_response))? 1: 0;
         data.points = (data.correct)? 
@@ -84,6 +85,7 @@ const feedback = {
 const rest = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: () => {
+        // TODO: dar feedback de los puntos ganados en cada bloque.
         return `
         <p>Has terminado un bloque experimental.</p></br>
         <p>Pulsa la barra espaciadora cuando quieras continuar con el siguiente.</p>
@@ -102,13 +104,13 @@ const transition = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: () => {
         if (norew == "Reversal") {
-            return `<p>Has termnado la primera mitad del experimento.</p>
+            return `<p>Has terminado la primera mitad del experimento.</p>
             <p>A partir de ahora van a cambiar las reglas que determinan los puntos que puedes ganar:</p>
             <p>Si aparece el color ${colors_t(colorLow)}, ganarás 10 veces más puntos.</p>
             <p>Si aparece el color ${colors_t(colorHigh)}, no ganarás puntos extra.</p></br>
             <p>Pulsa la barra espaciadora para continuar con el experimento.</p>`
         }
-        return `<p>Has termnado la primera mitad del experimento.</p>
+        return `<p>Has terminado la primera mitad del experimento.</p>
         <p>Ahora vas a continuar con la tarea, <b style = "color:red"> pero ya no ganarás más puntos</b>.</p></br>
         <p>Pulsa la barra espaciadora para continuar.</p>`
     },
