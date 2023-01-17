@@ -56,11 +56,11 @@ const feedback = {
         const response = jsPsych.data.get().last(1).values()[0].key_press;
         if (response !== null) {
             const acc = jsPsych.data.get().last(1).values()[0].correct;
-            if (jsPsych.timelineVariable("Phase") == "Practice" || jsPsych.timelineVariable("Phase") == "Extinction") {
+            if (jsPsych.timelineVariable("Phase") == "Practice") {
                 return (acc)? `<p style="color: yellow; font-size: 2rem;">Correcto</p>`:
                 `<p style="color: red; font-size: 2rem;">Error</p>`;
             }
-            const bonus = (jsPsych.timelineVariable("condition") == "High") ? 
+            const bonus = (jsPsych.timelineVariable("condition") == "High" && jsPsych.timelineVariable("Phase") != "Extinction") ? 
             `<div style="background-color: ${(acc)?`yellow`: `red`}; color: black; font-size: 2rem; font-weight: 600; padding: 40px;">${(acc)?`¡Puntos Extra!`: `Perdidas Extra`}</div></br>`: 
             '<div></div></br>';
             const points = jsPsych.data.get().last(1).values()[0].points;
