@@ -42,7 +42,7 @@ const cal_c = (e) => {
 
 const circle_c = (ctx, x, y, r, color) => {
     ctx.lineWidth = 3;
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = color2hex(color);
     ctx.beginPath();
     ctx.arc(x, y, r, 0, 2 * Math.PI);
     ctx.stroke();
@@ -67,7 +67,7 @@ const diamond_c = (ctx, x, y, r, color) => {
             // the top right edge
     ctx.closePath();
      //context.linewidth = line_w;
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = color2hex(color);
     ctx.stroke();
 }
 
@@ -127,13 +127,13 @@ const exp_c = () => {
                 [x, y] = coordinates[i];
                 [x, y] = [x + 200, y + 150];
                 if (i == 2) {
-                    diamond_c(ctx, x, y, 30, "#808080");
+                    diamond_c(ctx, x, y, 30, "gray");
                     line(ctx, x, y, 30, "#fff", "h");
                 } else if (i == 5) {
                     circle_c(ctx, x, y, 30, colorHigh);
                     line(ctx, x, y, 30, "#fff", "r");
                 } else { 
-                    circle_c(ctx, x, y, 30, "#808080");
+                    circle_c(ctx, x, y, 30, "gray");
                     line(ctx, x, y, 30, "#fff", "r");
                 }
             }
@@ -147,13 +147,13 @@ const exp_c = () => {
                     [x, y] = coordinates[i];
                     [x, y] = [x + 200, y + 150];
                     if (i == 2) {
-                        diamond_c(ctx, x, y, 30, "#808080");
+                        diamond_c(ctx, x, y, 30, "gray");
                         line(ctx, x, y, 30, "#fff", "v");
                     } else if (i == 5) {
                         circle_c(ctx, x, y, 30, colorLow);
                         line(ctx, x, y, 30, "#fff", "r");
                     } else { 
-                        circle_c(ctx, x, y, 30, "#808080");
+                        circle_c(ctx, x, y, 30, "gray");
                         line(ctx, x, y, 30, "#fff", "r");
                     }
                 }
@@ -162,7 +162,6 @@ const exp_c = () => {
     }
     if (c) state = true;
     else state = false;
-    console.log(state)
 }
 
 const prac_c = () => {
@@ -179,11 +178,11 @@ const prac_c = () => {
                 [x, y] = coordinates[i];
                 [x, y] = [x + 200, y + 150];
                 if (i == 2) {
-                    diamond_c(ctx, x, y, 30, "#808080")
+                    diamond_c(ctx, x, y, 30, "gray")
                     line(ctx, x, y, 30, "#fff", "h")
                 }
                 else { 
-                    circle_c(ctx, x, y, 30, "#808080")
+                    circle_c(ctx, x, y, 30, "gray")
                     line(ctx, x, y, 30, "#fff", "r")
                 }
             }
@@ -197,9 +196,9 @@ const prac_c = () => {
         if (!state) {
             let ctxh = h.getContext("2d");
             let ctxv = v.getContext("2d");
-            diamond_c(ctxh, 150, 75, 60, "#808080");
+            diamond_c(ctxh, 150, 75, 60, "gray");
             line(ctxh,150, 75, 60, "#fff", "h");
-            diamond_c(ctxv, 150, 75, 60, "#808080");
+            diamond_c(ctxv, 150, 75, 60, "gray");
             line(ctxv, 150, 75, 60, "#fff", "v");
         }
     }
@@ -218,28 +217,52 @@ const welcome = {
     choices: ['continuar']
 };
 
+const check = {
+    type: jsPsychBrowserCheck,
+    minimum_width: 1000,
+    minimum_height: 600,
+    window_resize_message: `
+    <p>La ventana de tu navegador es demasiado pequeña para completar este experimento. Por favor, maximiza el tamaño de la ventana de tu navegador. Si la ventana de tu navegador ya tiene su tamaño máximo, no podrás acceder al experimento.</p>
+    <p>La anchura mínima de la ventana es de <span id="browser-check-min-width"></span> px.</p>
+    <p>La anchura de tu ventana es de <span id="browser-check-actual-width"></span> px.</p>
+    <p>La altura mínima de la ventana es de <span id="browser-check-min-height"></span> px.</p>
+    <p>La altura de tu ventana es de <span id="browser-check-actual-height"></span> px.</p>`,
+    resize_fail_button_text: `No puedo ajustar la pantalla`,
+    inclusion_function: (data) => {
+        return data.mobile == false;
+      },
+      exclusion_message: (data) => {
+        if(data.mobile){
+          return '<p>Debes hacer el experimento en un ordenador o un portátil.</p> <p>Puedes cerrar esta página cuando quieras.</p>';
+        }
+        return `<p>No cumples con los requisitos para participar en este experimento.</p> <p>Puedes cerrar esta página cuando quieras.</p>`
+    },
+};
+
 
 // Instructions
-// TODO: resize img container
 const instructions_cal = {
     type:jsPsychInstructions,
     pages: [
-        wrapper(`<p>Antes de comenzar con el experimento, vas a realizar una breve fase de calibración.</p>
+        wrapper(`<p>Antes de comenzar con el experimento, vas a realizar una breve fase de calibración para ajustar el tamaño de los estímulos que te vamos a presentar. 
+        Ahora vamos a explicarte cómo vamos a reallizar este procedimiento e inmediatamente después podrás llevarla a cabo.</p>
         <p>Dado que la tarea se hace online, no hay forma de controlar a qué distancia te encuentras de la pantalla. 
         Por tanto, no podemos saber cómo percibirás los estímulos que te vamos a presentar. La calibración servirá para estimar
          a qué distancia te encuentras de la pantalla del ordenador, y así poder ajustar los estímulos para que su tamaño percibido sea similar para todas las personas que realicen el experimento.</p>
         <p>Antes de empezar con la calibración, <b>asegúrate de adoptar una posición que te permita extender las manos al teclado con comodidad</b>. Además, <b>debes intentar centrarte lo máximo que
         puedas en la pantalla de tu ordenador</b>. Es importante que adoptes una postura cómoda, ya que vas a tener que mantenerte en esa posición durante un tiempo.</p>`),
-        wrapper(`<p>La calibración va a tener dos fases. En primer lugar, no podemos presentarte un estímulo de un tamaño determinado si no conocemos el tamaño de los pixeles de tu ordenador. </p>
-        <p>Una forma sencilla de calcular esa correspondiencia consiste en pedirte que ajustes un objeto presentado por pantalla a un objeto real con un tamaño conocido. Para ello, servirán tarjetas de tamaño estandarizado como lo son tarjetas de crédito/débito, carné de conducir, DNI o la tarjeta universitaria.</p>
+        wrapper(`<p>La calibración va a tener dos fases. En primer lugar, no podemos presentarte un estímulo de un tamaño determinado si no sabemos a qué tamaño real equivale un píxel en tu ordenador.</p>
+        <p>Una forma sencilla de calcular esa correspondiencia consiste en pedirte que ajustes un objeto presentado por pantalla a un objeto real con un tamaño conocido. Para ello, servirán tarjetas de tamaño estandarizado como lo son tarjetas de crédito/débito, carné de conducir, DNI o la tarjeta universitaria.
+        Esta es una imagen que ilustra el procedimiento que llevarás a cabo en un momento (ahora mismo solo tienes que observar).</p>
         <div id="item" style="border: none; height: ${(53/85.6)*200}px; width: 200px; background-color: #ddd; position: relative; background-image: url('src/dni.jpg'); background-size: 100% auto; background-repeat: no-repeat;">
             <div id="jspsych-resize-handle" style="cursor: nwse-resize; background-color: none; width: 25px; height: 25px; border: 5px solid red; border-left: 0; border-top: 0; position: absolute; bottom: 0; right: 0;">
             </div>
         </div>
         <p>Tal cual se presenta arriba, podrás ajustar el tamaño del rectángulo a una de las tarjetas antes mencionadas. En caso de que no tengas ninguna tarjeta, también es posible utilizar una regla. En el caso de utilizar una regla la anchura de la tarjeta deberá ser de 85.6 milímetros.</p>`),
         wrapper(`<p>Por último, en la segunda fase vamos a realizar una pequeña prueba para estimar dónde se encuentra tu punto ciego visual. El punto ciego es una región de la retina donde realmente no hay visión, sin embargo, no solemos ser conscientes de su existencia dado que el punto ciego de un ojo suele quedar oculto por el rango de visión del otro.</p>
-        <p>La posición del punto ciego va a variar en función de la distancia a la que te encuentres de la pantalla. Por eso, esta prueba es tan importante, ya que es la que nos va a permitir estimar a que distancia te encuentras.</p>
-        <p>Para que puedas practicar un poco, prueba lo siguiente:</p>
+        <p>La posición del punto ciego va a variar en función de la distancia a la que te encuentres de la pantalla. Por eso, esta prueba es tan importante, ya que es la que nos va a permitir estimar a que distancia te encuentras. </p>
+        <p>Para que puedas familirarizarte con la tarea que vas a realizar durante la fase de calibración, aquí te vamos a presenter el procedimiento que vas a tener que llevar a cabo para que puedas practicar.</p>
+        <p>Prueba lo siguiente:</p>
         <ol style="max-width:90%;">
         <li>Pon la mano izquierda en la <b>barra espaciadora</b>.</li>
         <li>Tápate el ojo derecho con la mano derecha.</li>
@@ -251,7 +274,7 @@ const instructions_cal = {
         <div id="virtual-chinrest-square" style="position: absolute;background-color: #000; width:30px; height:30px"></div>
         `, false, true),
         wrapper(`<p>Si quieres repasar las instrucciones, pulsa <b>retroceder</b> para volver a leerlas.</p>
-        <p>Si no, pulsa <b>seguir</b>.</p>`, true)
+        <p>Si no, pulsa <b>seguir</b> para empezar con la calibración.</p>`, true)
     ],
     allow_keys: false,
     button_label_previous: "Retroceder",
@@ -271,71 +294,60 @@ const instructions_cal = {
 }
 
 
-// TODO: Show te instimulus in the instructions?
-const instructions_exp = {
-    type:jsPsychInstructions,
-    pages: [
-        wrapper(`<p>Has terminado la práctica, ¡muy bien!</p>
-        <p>En el experimento van a cambiar unas pocas cosas respecto a lo que has hecho en la práctica.</p>
-        <p>En primer lugar, en función de tu desempeño en la tarea <b>podrás ganar o perder una determinada cantidad de puntos</b> en cada ensayo. Si respondes correctamente ganarás puntos, mientras que si fallas perderás puntos. Por otro lado, si respondes rápido ganarás o perderás más puntos, pero si tardas en responder la cantidad de puntos que ganes o pierdas disminuirá. Si tardas demasiado en responder no ganarás o perderás puntos. </p>
-        <p>Para maximizar la cantidad de puntos que es posible obtener, intenta responder lo más rápido que puedas sin cometer errores.</p>`),
-        wrapper(`<p>Otra cosa que va a cambiar en el experimento es que en algunos ensayos uno de <b>los círculos que acompañan al diamante podrá aparecer en otro color</b>. Los colores en los que puede aparecer el círculo son <b>${colors_t(colorHigh)}</b> y <b>${colors_t(colorLow)}</b>.</p>
-        <div style = "display: flex; flex-direction: row; justify-content: space-around; margin: 30px auto;">
-        <canvas id="myCanvas1" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
-        <canvas id="myCanvas2" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
-        </div>
-        <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
-        wrapper(`<p>No obstante, <b>el color de los círculos también influirá en la cantidad de puntos que puedas ganar</b>.</p>
-        <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b>, se considerará ese ensayo como un ensayo bonus, por lo que <b>ganarás (o perderás) 10 veces más puntos</b>.</p>
-        <p>En el caso de que uno de los círculos aparezca de color <b>${colors_t(colorLow)}</b>, <b>no ganarás puntos extra</b>.</p>`),
-        wrapper(`<p>Ahora va a empezar al experimento.</p>
-        <p>Si quieres repasar las instrucciones, pulsa <b>retroceder</b>. Si quieres continuar, pulsa <b>seguir</b>.`, true),
-    ],
-    allow_keys: false,
-    button_label_previous: "Retroceder",
-    button_label_next: "Seguir",
-    show_clickable_nav: true,
-    post_trial_gap: 1000,
-    on_load: () => {
-        document.addEventListener("click", exp_c);
-
-    },
-    on_finish: () => {
-        //Fade to black transition
-        document.body.classList.add("black");
-        document.body.style.cursor = 'none';
-        document.removeEventListener("click", exp_c);
-
-    },
-    post_trial_gap: 1000,
-}
-
-const pre_prac = {
-    type: jsPsychHtmlKeyboardResponse,
-    stimulus: `<p>Estas a punto de empezar la práctica, recuerda:</p>
-    <p><b>Si la línea en el interior del diamante es horizontal, pulsa C</b>.</p>
-    <p><b>Si la línea en el interior del diamante es vertical, pulsa G</b>.</p>
-    <p>Pulsa la barra espaciadora para empezar la práctica.</p>`,
-    choices: [' ']
+const full_on = {
+    type: jsPsychFullscreen,
+    fullscreen_mode: true,
+    message: `<p>Antes de empezar con la calibración, vamos a pasar a modo pantalla completa.</p>
+    <p>En caso de que accidentamente salgas del modo pantalla completa, puedes volver activarlo pulsando la tecla <b>F11</b>.</p>
+    <p>Pulsa el botón <b>pantalla completa</b> para empezar con la calibración.</p>`,
+    button_label: "Pantalla completa",
 };
 
-const pre_exp = {
-    type: jsPsychHtmlKeyboardResponse,
-    stimulus: `<p>Estas a punto de empezar el experimento, recuerda:</p>
-    <p><b>Si la línea en el interior del diamante es horizontal, pulsa C</b>.</p>
-    <p><b>Si la línea en el interior del diamante es vertical, pulsa G</b>.</p>
-    <p>Pulsa la barra espaciadora para empezar el experimento.</p>`,
-    choices: [' ']
+const full_off = {
+    type: jsPsychFullscreen,
+    fullscreen_mode: false,
+};
+
+// Virtual chin-rest
+const resize = {
+    type: jsPsychVirtualChinrest,
+    blindspot_reps: 5,
+    resize_units: "none",
+    post_trial_gap:500,
+    viewing_distance_report: "none",
+    item_path: 'src/dni.jpg',
+    adjustment_prompt: `
+    <div style="text-align: left;">
+    <p>Haz clic y arrastra la esquina inferior derecha de la imagen hasta que tenga el mismo tamaño que una tarjeta de tamaño estandarizado sostenida contra la pantalla.</p>
+    <p>Si no tienes acceso a una tarjeta real, puedes utilizar una regla para medir la anchura de la imagen. Debes asegurarte de que la anchura es de 85.6 mm (8.56 cm).</p>
+    </div>`,
+    adjustment_button_prompt: `Haz clic aquí cuando la imagen tenga el tamaño correcto`,
+    blindspot_prompt: `<p>Ahora vamos a medir a qué distancia te encuentras de la pantalla:</p>
+    <div>
+    <ol style="max-width:80%; text-align: left;">
+    <li>Pon la mano izquierda en la <b>barra espaciadora</b>.</li>
+    <li>Tápate el ojo derecho con la mano derecha.</li>
+    <li>Atiende al cuadrado negro con el ojo izquierdo. No dejes de mirarlo.</li>
+    <li>Cuando pulses la barra espaciadora el <b style = "color:red;">círculo rojo</b> comenzará a moverse. </li>
+    <li>Pulsa la barra espaciadora cuando percibas que el círculo desaparece.</li>
+    </div>
+    </ol>
+    <p style = "margin-bottom: 30px;">Pulsa la barra espaciadora para empezar.</p>`,
+    blindspot_measurements_prompt: `repeticiones pendientes: `,
+    on_finish: (data) => {
+        jsPsych.data.addProperties({px2deg: data.px2deg,
+        viewing_distance: data.view_dist_mm,});
+    }
 };
 
 const instructions_prac = {
     type:jsPsychInstructions,
     pages: [
         wrapper(`<p>Ya has terminado la calibración, ahora vamos a empezar con el experimento.</p>
-        <p>Durante la tarea se te presentarán por pantalla 6 formas conformando un círculo imaginario. En primer lugar, deberás atender a la <b>forma diferente</b> al resto. Esta siempre será un <b>diamante</b>.</p>
+        <p>Durante la tarea se te presentarán por pantalla 6 figuras conformando un círculo imaginario. En primer lugar, deberás atender a la <b>figura que es diferente</b> al resto. Esta siempre será un <b>rombo</b>.</p>
         <canvas id="myCanvas" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
         <p>Lo que puedes ver arriba es un ejemplo de lo que verás durante el experimento.</p>`),
-        wrapper(`<p>Dentro de cada forma aparecerá una línea. Tu tarea consistirá en <b>reportar la orientación de la línea que se encuentra dentro del diamante</b>.</p>
+        wrapper(`<p>Dentro de cada figura aparecerá una línea. Tu tarea consistirá en <b>determinar la orientación de la línea que se encuentra dentro del rombo</b>.</p>
         <div style = "display: flex; flex-direction: row; justify-content: space-around; margin-top: 30px;">
         <div>
         <canvas id="h" width="300" height="150" style = "border-radius: 3%; background-color: #000"></canvas>
@@ -370,93 +382,71 @@ const instructions_prac = {
     },
     //post_trial_gap: 2000,
 }
-// Virtual chin-rest
-const resize = {
-    type: jsPsychVirtualChinrest,
-    blindspot_reps: 5,
-    resize_units: "none",
-    post_trial_gap:500,
-    viewing_distance_report: "none",
-    item_path: 'src/dni.jpg',
-    adjustment_prompt: `
-    <div style="text-align: left;">
-    <p>Haz clic y arrastra la esquina inferior derecha de la imagen hasta que tenga el mismo tamaño que una tarjeta de tamaño estandarizado sostenida contra la pantalla.</p>
-    <p>Si no tienes acceso a una tarjeta real, puedes utilizar una regla para medir la anchura de la imagen. Debes asegurarte de que la anchura es de 85.6 mm (8.56 cm).</p>
-    </div>`,
-    adjustment_button_prompt: `Haz clic aquí cuando la imagen tenga el tamaño correcto`,
-    blindspot_prompt: `<p>Ahora vamos a medir a qué distancia te encuentras de la pantalla:</p>
-    <div>
-    <ol style="max-width:80%; text-align: left;">
-    <li>Pon la mano izquierda en la <b>barra espaciadora</b>.</li>
-    <li>Tápate el ojo derecho con la mano derecha.</li>
-    <li>Atiende al cuadrado negro con el ojo izquierdo. No dejes de mirarlo.</li>
-    <li>Cuando pulses la barra espaciadora el <b style = "color:red;">círculo rojo</b> comenzará a moverse. </li>
-    <li>Pulsa la barra espaciadora cuando percibas que el círculo desaparece.</li>
-    </div>
-    </ol>
-    <p style = "margin-bottom: 30px;">Pulsa la barra espaciadora para empezar.</p>`,
-    blindspot_measurements_prompt: `repeticiones pendientes: `,
-    on_finish: (data) => {
-        jsPsych.data.addProperties({px2deg: data.px2deg,
-        viewing_distance: data.view_dist_mm,});
-    }
+
+const pre_prac = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: `<p>Estas a punto de empezar la práctica, recuerda:</p>
+    <p><b>Si la línea en el interior del diamante es horizontal, pulsa C</b>.</p>
+    <p><b>Si la línea en el interior del diamante es vertical, pulsa G</b>.</p>
+    <p>Pulsa la barra espaciadora para empezar la práctica.</p>`,
+    choices: [' ']
 };
 
 
-const full_on = {
-    type: jsPsychFullscreen,
-    fullscreen_mode: true,
-    message: `<p>Antes de empezar con la calibración, vamos a pasar a modo pantalla completa.</p>
-    <p>En caso de que accidentamente salgas del modo pantalla completa, puedes volver activarlo pulsando la tecla <b>F11</b>.</p>
-    <p>Pulsa el botón <b>pantalla completa</b> para empezar con la calibración.</p>`,
-    button_label: "Pantalla completa",
-};
+const instructions_exp = {
+    type:jsPsychInstructions,
+    pages: [
+        wrapper(`<p>Has terminado la práctica, ¡muy bien!</p>
+        <p>En el experimento van a cambiar algunas respecto a lo que has hecho en la práctica.</p>
+        <p>En primer lugar, en función de tu desempeño, en la tarea <b>podrás ganar o perder una determinada cantidad de puntos</b> en cada ensayo. Si respondes correctamente ganarás puntos, mientras que si fallas perderás puntos. 
+        Por otro lado, cuanto más rápido respondas, más puntos ganarás (si la respuesta es correcta) o perderás (si no lo es), mientras que si respondes con mayor lentitud la cantidad de puntos ganados o perdidos será menor. En todo caso, si tardas demasiado en contestar no ganarás ni perderás puntos. </p>
+        <p>Por tanto, para maximizar la cantidad de puntos que es posible obtener, intenta responder lo más rápido que puedas sin cometer errores.</p>`),
+        wrapper(`<p>Otra cosa que va a cambiar en el experimento es que en algunos ensayos uno de <b>los círculos que acompañan al diamante podrá aparecer en otro color</b>. Los colores en los que puede aparecer el círculo son <b>${colors_t(colorHigh)}</b> y <b>${colors_t(colorLow)}</b>.</p>
+        <div style = "display: flex; flex-direction: row; justify-content: space-around; margin: 30px auto;">
+        <canvas id="myCanvas1" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
+        <canvas id="myCanvas2" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
+        </div>
+        <p><b>El color de los círculos influirá en la cantidad de puntos que puedes ganar</b>.</p>
+        <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b>, se considerará ese ensayo como un ensayo bonus, por lo que <b>ganarás (o perderás) 10 veces más puntos</b>.</p>
+        <p>En el caso de que uno de los círculos aparezca de color <b>${colors_t(colorLow)}</b> no ganarás ni perderás puntos extra.</p>
+        <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
+        wrapper(`<p>Ahora va a empezar al experimento.</p>
+        <p>El experimento va a constar de dos fases, cada una con ${`${blocks.toString()} bloque${(blocks > 1)?`s`:``}`} de 24 ensayos.</p>
+        <p>Entre bloques podrás descansar si lo necesitas.</p>
+        <p>La duración aproximada del experimento será de 40 minutos.</p>
+        <p>Si quieres repasar las instrucciones, pulsa <b>retroceder</b>. Si quieres continuar, pulsa <b>seguir</b>.`, true),
+    ],
+    allow_keys: false,
+    button_label_previous: "Retroceder",
+    button_label_next: "Seguir",
+    show_clickable_nav: true,
+    post_trial_gap: 1000,
+    on_load: () => {
+        document.addEventListener("click", exp_c);
 
-const full_off = {
-    type: jsPsychFullscreen,
-    fullscreen_mode: false,
-};
-
-const report = {
-    type: jsPsychHtmlButtonResponse,
-    stimulus: () => {
-        const points = jsPsych.data.get().filter({trial_type: "psychophysics"}).select("points").sum();
-        return `<p>Acabas de terminar el experimento.</p>
-        <p>Has ganado ${formatting(points.toString())} puntos.</p>
-        <p>¡Muy bien!</p>
-        <p>Antes de salir de esta página nos gustaría que respondieses unas breves preguntas.</p>
-        <p>Pulsa continuar para seguir.</p>`
     },
-    choices: ['Continuar'],
-        on_finish: () => {
-        if (jatos_run == true) {
-            const results = jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).csv();
-            jatos.submitResultData(results);
-        }
-    }
+    on_finish: () => {
+        //Fade to black transition
+        document.body.classList.add("black");
+        document.body.style.cursor = 'none';
+        document.removeEventListener("click", exp_c);
+
+    },
+    post_trial_gap: 1000,
+}
+
+
+const pre_exp = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: `<p>Estas a punto de empezar el experimento, recuerda:</p>
+    <p><b>Si la línea en el interior del diamante es horizontal, pulsa C</b>.</p>
+    <p><b>Si la línea en el interior del diamante es vertical, pulsa G</b>.</p>
+    <p>Pulsa la barra espaciadora para empezar el experimento.</p>`,
+    choices: [' ']
 };
 
-const check = {
-    type: jsPsychBrowserCheck,
-    minimum_width: 1000,
-    minimum_height: 600,
-    window_resize_message: `
-    <p>La ventana de tu navegador es demasiado pequeña para completar este experimento. Por favor, maximiza el tamaño de la ventana de tu navegador. Si la ventana de tu navegador ya tiene su tamaño máximo, no podrás acceder al experimento.</p>
-    <p>La anchura mínima de la ventana es de <span id="browser-check-min-width"></span> px.</p>
-    <p>La anchura de tu ventana es de <span id="browser-check-actual-width"></span> px.</p>
-    <p>La altura mínima de la ventana es de <span id="browser-check-min-height"></span> px.</p>
-    <p>La altura de tu ventana es de <span id="browser-check-actual-height"></span> px.</p>`,
-    resize_fail_button_text: `No puedo ajustar la pantalla`,
-    inclusion_function: (data) => {
-        return data.mobile == false;
-      },
-      exclusion_message: (data) => {
-        if(data.mobile){
-          return '<p>Debes hacer el experimento en un ordenador o un portátil.</p> <p>Puedes cerrar esta página cuando quieras.</p>';
-        }
-        return `<p>No cumples con los requisitos para participar en este experimento.</p> <p>Puedes cerrar esta página cuando quieras.</p>`
-    },
-};
+
+
 
 const questions = {
     type: jsPsychSurveyHtmlForm,
