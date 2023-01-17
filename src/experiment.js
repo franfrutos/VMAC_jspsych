@@ -56,11 +56,11 @@ const feedback = {
         const response = jsPsych.data.get().last(1).values()[0].key_press;
         if (response !== null) {
             const acc = jsPsych.data.get().last(1).values()[0].correct;
-            if (jsPsych.timelineVariable("Phase") == "Practice") {
+            if (jsPsych.timelineVariable("Phase") == "Practice" || jsPsych.timelineVariable("Phase") == "Devaluation") {
                 return (acc)? `<p style="color: yellow; font-size: 2rem;">Correcto</p>`:
                 `<p style="color: red; font-size: 2rem;">Error</p>`;
             }
-            const bonus = (jsPsych.timelineVariable("condition") == "High" && jsPsych.timelineVariable("Phase") != "Practice") ? 
+            const bonus = (jsPsych.timelineVariable("condition") == "High" && jsPsych.timelineVariable("Phase") != "Extinction") ? 
             `<div style="background-color: ${(acc)?`yellow`: `red`}; color: black; font-size: 2rem; font-weight: 600; padding: 40px;">${(acc)?`¡Puntos Extra!`: `Perdidas Extra`}</div></br>`: 
             '<div></div></br>';
             const points = jsPsych.data.get().last(1).values()[0].points;
@@ -110,7 +110,14 @@ const transition = {
             return `<p>Has terminado la primera mitad del experimento.</p>
             <p>A partir de ahora van a cambiar las reglas que determinan los puntos que puedes ganar:</p>
             <p>Si aparece el color ${colors_t(colorLow)}, ganarás 10 veces más puntos.</p>
-            <p>Si aparece el color ${colors_t(colorHigh)}, no ganarás puntos extra.</p></br>
+            <p>Si aparece el color ${colors_t(colorHigh)}, no ganarás puntos extra.</p>
+            <p>Pulsa la barra espaciadora para continuar con el experimento.</p>`
+        }
+        if (norew == "Extinction") {
+            return `<p>Has terminado la primera mitad del experimento.</p>
+            <p style="width:80%">Ahora vas a continuar con la tarea, pero a partir de ahora el círculo ${colors_t(colorHigh)} ya no señala puntos extra. 
+            Ganarás los puntos que correspondan a tu rapidez en aciertos, 
+            como en el caso de los ensayos donde no hay colores o donde aparece el círculo ${colors_t(colorLow)} ganarás más puntos.</p>
             <p>Pulsa la barra espaciadora para continuar con el experimento.</p>`
         }
         return `<p>Has terminado la primera mitad del experimento.</p>
