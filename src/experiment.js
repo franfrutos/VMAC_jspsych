@@ -3,7 +3,7 @@ const jatos_run = window.jatos !== undefined || false;
 
 const timeline = [];  
 
-let trialNum = 0;
+let trialNum = 0, total_points = 0;
 
 // Experimental trial
 
@@ -41,6 +41,8 @@ const trial = {
         data.points = (data.correct)? 
         compute_points(data.rt, data.condition, data.Phase):
         -compute_points(data.rt, data.condition, data.Phase);
+        total_points = (total_points + data.points <= 0)? 0: total_points + data.points;
+        data.total_points = total_points;
     },
     //post_trial_gap: 500 + Math.floor(Math.random()*201),
     trial_duration: 3200,
@@ -59,7 +61,7 @@ const feedback = {
                 `<p style="color: red; font-size: 2rem;">Error</p>`;
             }
             const bonus = (jsPsych.timelineVariable("condition") == "High") ? 
-            '<div style="background-color: yellow; color: black; font-size: 2rem; font-weight: 600; padding: 40px;">¡Puntos Extra!</div></br>': 
+            `<div style="background-color: ${(acc)?`yellow`: `red`}; color: black; font-size: 2rem; font-weight: 600; padding: 40px;">${(acc)?`¡Puntos Extra!`: `Perdidas Extra`}</div></br>`: 
             '<div></div></br>';
             const points = jsPsych.data.get().last(1).values()[0].points;
             const gains = (acc)? 
@@ -87,8 +89,9 @@ const rest = {
     stimulus: () => {
         // TODO: dar feedback de los puntos ganados en cada bloque.
         return `
-        <p>Has terminado un bloque experimental.</p></br>
-        <p>Pulsa la barra espaciadora cuando quieras continuar con el siguiente.</p>
+        <p>Has terminado un bloque experimental.</p>
+        <p>Llevas ${formatting(total_points.toString())} puntos acumulados.</p>
+        <p>Pulsa la barra espaciadora cuando quieras continuar.</p>
          `
     },
     choices: [' '],
@@ -126,6 +129,24 @@ const transition = {
         }
     }
 }
+
+const report = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: () => {
+        return `<p>Acabas de terminar el experimento.</p>
+        <p>Has ganado ${formatting(total_points.toString())} puntos.</p>
+        <p>¡Muy bien!</p>
+        <p>Antes de salir de esta página nos gustaría que respondieses unas breves preguntas.</p>
+        <p>Pulsa continuar para seguir.</p>`
+    },
+    choices: ['Continuar'],
+        on_finish: () => {
+        if (jatos_run == true) {
+            const results = jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).csv();
+            jatos.submitResultData(results);
+        }
+    }
+};
 
 // Conditional 
 const if_nodeRest = {
