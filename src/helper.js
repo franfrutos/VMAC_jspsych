@@ -125,13 +125,13 @@ const set_attributes = (s, colors, targetOri) => {
     const actualOri = (targetOri === "vertical") ? 90 : 0;
     switch(s) {
         case 0: 
-            return ["circle", "gray", shuffle([45, 135, 225, 315])[0]]
+            return ["circle", color2hex("gray"), shuffle([45, 135, 225, 315])[0]]
         case 1:
-            return ["circle", colors[0], shuffle([45, 135, 225, 315])[0]]
+            return ["circle", color2hex(colors[0]), shuffle([45, 135, 225, 315])[0]]
         case 2: 
-            return ["diamond", "gray", actualOri]
+            return ["diamond", color2hex("gray"), actualOri]
         default:
-            return ["circle", colors[1], shuffle([45, 135, 225, 315])[0]]
+            return ["circle", color2hex(colors[1]), shuffle([45, 135, 225, 315])[0]]
     }
 }
 
@@ -201,6 +201,23 @@ const pickColor = (counterbalance) => {
             return ["green", "pink"]
         default:
             return ["pink", "green"]
+    }
+}
+
+// Colors from: https://osf.io/6jhbt
+const color2hex = (color) => {
+    switch(color) {
+        case "gray":
+            return "#464646";
+        case "pink":
+            return "#C26187";
+        case "green":
+            return "#369141";
+        case "orange":
+            return "#C15F1E";
+        default:
+            return "#258DA5";
+            
     }
 }
 
@@ -322,10 +339,10 @@ const compute_points = (rt, condition, phase) => {
 
 // Function to translate colors to spanish
 const colors_t = (color) => {
-    if (color == "orange") return `<span style = "color:${color}">naranja</span>`
-    if (color == "blue") return `<span style = "color:${color}">azul</span>`
-    if (color == "green") return `<span style = "color:${color}">verde</span>`
-    return `<span style = "color:${color}">rosa</span>`
+    if (color == "orange") return `<span style = "color:${color2hex(color)}">naranja</span>`
+    if (color == "blue") return `<span style = "color:${color2hex(color)}">azul</span>`
+    if (color == "green") return `<span style = "color:${color2hex(color)}">verde</span>`
+    return `<span style = "color:${color2hex(color)}">rosa</span>`
 }
 
 // Function that formate numbers
