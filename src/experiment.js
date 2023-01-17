@@ -60,7 +60,7 @@ const feedback = {
                 return (acc)? `<p style="color: yellow; font-size: 2rem;">Correcto</p>`:
                 `<p style="color: red; font-size: 2rem;">Error</p>`;
             }
-            const bonus = (jsPsych.timelineVariable("condition") == "High" && jsPsych.timelineVariable("Phase") != "Extinction") ? 
+            const bonus = (jsPsych.timelineVariable("condition") == "High" && jsPsych.timelineVariable("Phase") != "Practice") ? 
             `<div style="background-color: ${(acc)?`yellow`: `red`}; color: black; font-size: 2rem; font-weight: 600; padding: 40px;">${(acc)?`¡Puntos Extra!`: `Perdidas Extra`}</div></br>`: 
             '<div></div></br>';
             const points = jsPsych.data.get().last(1).values()[0].points;
