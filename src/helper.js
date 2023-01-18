@@ -329,11 +329,12 @@ const create_trials = (blocks, norew, prac = true) => {
 
 // Function to compute the amount of points earned in each trial
 const compute_points = (rt, condition, phase) => {
-    if (rt === null || phase == "Practice" || phase == "Devaluation") return 0
+    if (rt === null || phase == "Practice" || phase == "Omission") return 0;
+    if (condition == "High" && phase == "Devaluation") return 0;
     const bonus = (condition == "High" && phase != "Extinction")? 1: .1;
-    const points = Math.floor((1000 - rt) * bonus)
+    const points = Math.floor((1000 - rt) * bonus);
     if (points < 0) return 0;
-    return points
+    return points;
 }
 
 // Function to translate colors to spanish

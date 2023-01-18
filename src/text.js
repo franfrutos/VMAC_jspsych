@@ -458,7 +458,7 @@ const instructions_exp = {
         <canvas id="myCanvas2" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
         </div>
         <p><b>El color de los círculos influirá en la cantidad de puntos que puedes ganar</b>.</p>
-        <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b>, se considerará ese ensayo como un ensayo bonus, por lo que <b>ganarás (o perderás) 10 veces más puntos</b>.</p>
+        <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b> <b>ganarás (o perderás) 10 veces más puntos</b> de lo habitual.</p>
         <p>En el caso de que uno de los círculos aparezca de color <b>${colors_t(colorLow)}</b> no ganarás ni perderás puntos extra.</p>
         <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
         wrapper(`<p>Ahora va a empezar al experimento.</p>
