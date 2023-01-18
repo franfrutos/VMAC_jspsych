@@ -40,6 +40,58 @@ const cal_c = (e) => {
     }
 }
 
+const aspect_ratio = 85.6/53;
+const ResizePhase = () => {
+    const display_element = document.querySelector(".inst");
+    // Event listeners for mouse-based resize
+    let dragging = false;
+    let origin_x, origin_y;
+    let cx, cy, curr_width, curr_height, to_height, to_width;
+    const scale_div = display_element.querySelector("#item");
+    if (scale_div != null) {
+        function mouseupevent() {
+            dragging = false;
+        }
+        display_element.addEventListener("mouseup", mouseupevent);
+        function mousedownevent(e) {
+            e.preventDefault();
+            dragging = true;
+            origin_x = e.pageX;
+            origin_y = e.pageY;
+            cx = parseInt(scale_div.style.width);
+            cy = parseInt(scale_div.style.height);
+        }
+        display_element
+            .querySelector("#jspsych-resize-handle")
+            .addEventListener("mousedown", mousedownevent);
+        function resizeevent(e) {
+            if (dragging) {
+                curr_height = scale_div.style.height;
+                curr_width = scale_div.style.width;
+                let dx = e.pageX - origin_x;
+                let dy = e.pageY - origin_y;
+                if (Math.abs(dx) >= Math.abs(dy)) {
+                    to_width = Math.round(Math.max(20, cx + dx * 2));
+                    to_height = Math.round(Math.max(20, cx + dx * 2) / aspect_ratio);
+                }
+                else {
+                    to_height = Math.round(Math.max(20, cy + dy * 2));
+                    to_width = Math.round(aspect_ratio * Math.max(20, cy + dy * 2));
+                }
+                // This limits the maximun size
+                if (to_height >= 300 || to_height <= 100) {
+                    scale_div.style.height = curr_height + "px";
+                    scale_div.style.width = curr_width + "px";
+                } else {
+                    scale_div.style.height = to_height + "px";
+                    scale_div.style.width = to_width + "px";
+                }
+            }
+        }
+        display_element.addEventListener("mousemove", resizeevent);
+    }
+}
+
 const circle_c = (ctx, x, y, r, color) => {
     ctx.lineWidth = 3;
     ctx.strokeStyle = color2hex(color);
@@ -244,30 +296,26 @@ const check = {
 const instructions_cal = {
     type:jsPsychInstructions,
     pages: [
-        wrapper(`<p>Antes de comenzar con el experimento, vas a realizar una breve fase de calibración para ajustar el tamaño de los estímulos que te vamos a presentar. 
-        Ahora vamos a explicarte cómo vamos a reallizar este procedimiento e inmediatamente después podrás llevarla a cabo.</p>
-        <p>Dado que la tarea se hace online, no hay forma de controlar a qué distancia te encuentras de la pantalla. 
-        Por tanto, no podemos saber cómo percibirás los estímulos que te vamos a presentar. La calibración servirá para estimar
-         a qué distancia te encuentras de la pantalla del ordenador, y así poder ajustar los estímulos para que su tamaño percibido sea similar para todas las personas que realicen el experimento.</p>
+        wrapper(`<p>Antes de comenzar con el experimento vas a realizar una breve fase de calibración, que va a consistir de en dos pequeñas pruebas. 
+        Con la calibración vamos a ajustar el tamaño de los estímulos que te vamos a presentar a la distancia a la que te encuentras de la pantalla. Ahora vamos a explicarte cómo vamos a reallizar este procedimiento antes de llevarlo a cabo.</p>
         <p>Antes de empezar con la calibración, <b>asegúrate de adoptar una posición que te permita extender las manos al teclado con comodidad</b>. Además, <b>debes intentar centrarte lo máximo que
-        puedas en la pantalla de tu ordenador</b>. Es importante que adoptes una postura cómoda, ya que vas a tener que mantenerte en esa posición durante un tiempo.</p>`),
-        wrapper(`<p>La calibración va a tener dos fases. En primer lugar, no podemos presentarte un estímulo de un tamaño determinado si no sabemos a qué tamaño real equivale un píxel en tu ordenador.</p>
-        <p>Una forma sencilla de calcular esa correspondiencia consiste en pedirte que ajustes un objeto presentado por pantalla a un objeto real con un tamaño conocido. Para ello, servirán tarjetas de tamaño estandarizado como lo son tarjetas de crédito/débito, carné de conducir, DNI o la tarjeta universitaria.
-        Esta es una imagen que ilustra el procedimiento que llevarás a cabo en un momento (ahora mismo solo tienes que observar).</p>
-        <div id="item" style="border: none; height: ${(53/85.6)*200}px; width: 200px; background-color: #ddd; position: relative; background-image: url('src/dni.jpg'); background-size: 100% auto; background-repeat: no-repeat;">
+        puedas en la pantalla de tu ordenador</b>. Intenta mantenerte en esa postura durante todo el experimento.</p>`),
+        wrapper(`<p>La primera prueba va a consistir en ajustar un objeto presentado por pantalla a una tarjeta con un tamaño estandarizado. Servirán tarjetas de crédito/débito, carné de conducir, DNI o la tarjeta universitaria. 
+        Deberás utilizar una de dichas tarjetas para hacer que la tarjeta que aparezca por pantalla tenga el mismo tamaño. Para ello, puedes <b>arrastrar la esquina inferior derehca de la tarjeta para cambiar su tamaño</b>.</p>
+        <p>Puedes probar a ajustar el tamaño de la tarjeta para prácticar antes de proceder con la calibración:</p>
+        <div id="item" style="border: none; height: 200px; width: ${aspect_ratio*200}px; background-color: #ddd; position: relative; background-image: url('src/dni.jpg'); background-size: 100% auto; background-repeat: no-repeat;">
             <div id="jspsych-resize-handle" style="cursor: nwse-resize; background-color: none; width: 25px; height: 25px; border: 5px solid red; border-left: 0; border-top: 0; position: absolute; bottom: 0; right: 0;">
             </div>
         </div>
-        <p>Tal cual se presenta arriba, podrás ajustar el tamaño del rectángulo a una de las tarjetas antes mencionadas. En caso de que no tengas ninguna tarjeta, también es posible utilizar una regla. En el caso de utilizar una regla la anchura de la tarjeta deberá ser de 85.6 milímetros.</p>`),
-        wrapper(`<p>Por último, en la segunda fase vamos a realizar una pequeña prueba para estimar dónde se encuentra tu punto ciego visual. El punto ciego es una región de la retina donde realmente no hay visión, sin embargo, no solemos ser conscientes de su existencia dado que el punto ciego de un ojo suele quedar oculto por el rango de visión del otro.</p>
-        <p>La posición del punto ciego va a variar en función de la distancia a la que te encuentres de la pantalla. Por eso, esta prueba es tan importante, ya que es la que nos va a permitir estimar a que distancia te encuentras. </p>
-        <p>Para que puedas familirarizarte con la tarea que vas a realizar durante la fase de calibración, aquí te vamos a presenter el procedimiento que vas a tener que llevar a cabo para que puedas practicar.</p>
+        <p>En caso de que no tengas ninguna tarjeta, también es posible utilizar una regla. Si optas por una regla, deberás ajustar la tarjeta para que tenga una anchura de 85.6 milímetros.</p>`),
+        wrapper(`<p>En la segunda prueba vamos a estimar dónde se encuentra tu punto ciego visual, cuya posición va a depender de la distancia a la que te encuentres de la pantalla. Por tanto, esta prueba es fundamental para poder ajustar el tamaño de los estímulos en pantalla.</p>
+        <p>Para que puedas familirarizarte con la tarea antes de la calibración, aquí te presentamos el procedimiento que vas a tener que llevar a cabo para que puedas practicar.</p>
         <p>Prueba lo siguiente:</p>
         <ol style="max-width:90%;">
         <li>Pon la mano izquierda en la <b>barra espaciadora</b>.</li>
         <li>Tápate el ojo derecho con la mano derecha.</li>
         <li>Atiende al cuadrado negro con el ojo izquierdo. No dejes de mirarlo.</li>
-        <li>Cuando pulses la barra espaciadora el <b style = "color:red;">círculo rojo</b> comenzará a moverse. </li>
+        <li>Cuando pulses la barra espaciadora el <b style = "color:red;">círculo rojo</b> comenzará a moverse.</li>
         <li>Pulsa la barra espaciadora cuando percibas que el círculo desaparece.</li>
         </ol>
         <div id="virtual-chinrest-circle" style="position: absolute;background-color: #f00; width: 30px; height: 30px; border-radius:50px;"></div>
@@ -285,10 +333,13 @@ const instructions_cal = {
         // Animate ball instructions
         document.addEventListener("click", setBall);
         document.addEventListener("keydown", cal_c);
+        document.addEventListener("click", ResizePhase);
     },
     on_finish: () => {
         document.removeEventListener("click", setBall);
         document.removeEventListener("keydown", cal_c);
+        document.removeEventListener("click", ResizePhase);
+
         state = false;
     }
 }
@@ -401,7 +452,7 @@ const instructions_exp = {
         <p>En primer lugar, en función de tu desempeño, en la tarea <b>podrás ganar o perder una determinada cantidad de puntos</b> en cada ensayo. Si respondes correctamente ganarás puntos, mientras que si fallas perderás puntos. 
         Por otro lado, cuanto más rápido respondas, más puntos ganarás (si la respuesta es correcta) o perderás (si no lo es), mientras que si respondes con mayor lentitud la cantidad de puntos ganados o perdidos será menor. En todo caso, si tardas demasiado en contestar no ganarás ni perderás puntos. </p>
         <p>Por tanto, para maximizar la cantidad de puntos que es posible obtener, intenta responder lo más rápido que puedas sin cometer errores.</p>`),
-        wrapper(`<p>Otra cosa que va a cambiar en el experimento es que en algunos ensayos uno de <b>los círculos que acompañan al diamante podrá aparecer en otro color</b>. Los colores en los que puede aparecer el círculo son <b>${colors_t(colorHigh)}</b> y <b>${colors_t(colorLow)}</b>.</p>
+        wrapper(`<p>Otra cosa que va a cambiar en el experimento es que en algunos ensayos uno de <b>los círculos que acompañan al rombo podrán aparecer en otro color</b>. Los colores en los que puede aparecer el círculo son <b>${colors_t(colorHigh)}</b> y <b>${colors_t(colorLow)}</b>.</p>
         <div style = "display: flex; flex-direction: row; justify-content: space-around; margin: 30px auto;">
         <canvas id="myCanvas1" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
         <canvas id="myCanvas2" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
