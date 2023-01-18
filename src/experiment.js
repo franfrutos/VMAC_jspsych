@@ -1,6 +1,4 @@
-// Run in JATOS server?
-const jatos_run = window.jatos !== undefined || false;
-
+// Declaring variables
 const timeline = [];  
 
 let trialNum = 0, total_points = 0;
