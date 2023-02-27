@@ -168,6 +168,10 @@ const cross_c = (ctx, x, y, r) => {
 
 const exp_c = () => {
     const c = document.getElementById("myCanvas1");
+    const urlvar = (jatos_run)? jatos.urlQueryParameters : jsPsych.data.urlVariables();
+    const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
+    const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
+
     if (c) {
         if (state) state = false;
         else state = true;
@@ -268,30 +272,6 @@ const welcome = {
     <p style="margin-bottom: 2rem;"><b>No cierres ni recargues esta página hasta que se te indique que el experimento ha finalizado</b>.</p>
     <p style="margin-bottom: 3rem;">Una vez te asegures de cumplir con lo expresado arriba, pulsa <b>continuar</b> para empezar.</p>`),
     choices: ['continuar'],
-    on_load: () => {
-        // jatos functions must be used inside jatos.onLoad().
-        if (jatos_run) {
-            const urlvar = jatos.urlQueryParameters;            ;
-            norew = (urlvar.phase != undefined && ["Reversal", "Devaluation", "Omission"].includes(capitalize(urlvar.phase)))? 
-            capitalize(urlvar.phase): 
-            "Extinction";
-            blocks = (Number(urlvar.blocks) == 0)? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
-            prac = (urlvar.blocks == 0 && urlvar.blocks != undefined)? false : urlvar.prac != "false" && true;
-        
-        
-            if (urlvar.phase == undefined) console.log("No phase parameter used. Default is Extinction.")
-            else if (!["Reversal", "Devaluation", "Omission"].includes(capitalize(urlvar.phase))) console.log(`WARNING: an invalid phase parameter was used: ${urlvar.phase}. Phase has been set to Extinction.`);
-        
-            console.log(`Experiment Parameters
-            Phase: ${norew}. Blocks: ${blocks}. Practice: ${prac}`);
-        
-            trialObj = create_trials(blocks, norew, prac);
-            [colorHigh, colorLow] = (blocks != 0)? trialObj["Reward"][1].colors: ["orange", "blue"];
-            console.log(`Counterbalance: ${counterbalance}`)
-            if (blocks != 0) console.log(`Color high is ${colorHigh}. Color low is ${colorLow}.`)
-        
-        }
-    }
 };
 
 const check = {
@@ -470,31 +450,38 @@ const pre_prac = {
 
 
 const instructions_exp = {
-    type:jsPsychInstructions,
-    pages: [
-        wrapper(`<p>Has terminado la práctica, ¡muy bien!</p>
-        <p>En el experimento van a cambiar algunas respecto a lo que has hecho en la práctica.</p>
-        <p>En primer lugar, en función de tu desempeño, en la tarea <b>podrás ganar o perder una determinada cantidad de puntos</b> en cada ensayo. Si respondes correctamente ganarás puntos, mientras que si fallas perderás puntos. 
-        Por otro lado, cuanto más rápido respondas, más puntos ganarás (si la respuesta es correcta) o perderás (si no lo es), mientras que si respondes con mayor lentitud la cantidad de puntos ganados o perdidos será menor. En todo caso, si tardas demasiado en contestar no ganarás ni perderás puntos. </p>
-        <p>Por tanto, para maximizar la cantidad de puntos que es posible obtener, intenta responder lo más rápido que puedas sin cometer errores.</p>`),
-        wrapper(`<p>Otra cosa que va a cambiar en el experimento es que en algunos ensayos uno de <b>los círculos que acompañan al rombo podrán aparecer en otro color</b>. Los colores en los que puede aparecer el círculo son <b>${colors_t(colorHigh)}</b> y <b>${colors_t(colorLow)}</b>.</p>
-        <div style = "display: flex; flex-direction: row; justify-content: space-around; margin: 30px auto;">
-        <canvas id="myCanvas1" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
-        <canvas id="myCanvas2" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
-        </div>
-        <p><b>El color de los círculos influirá en la cantidad de puntos que puedes ganar</b>.</p>
-        <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b> <b>ganarás (o perderás) 10 veces más puntos</b> de lo habitual.</p>
-        <p>En el caso de que uno de los círculos aparezca de color <b>${colors_t(colorLow)}</b> no ganarás ni perderás puntos extra.</p>
-        <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
-        wrapper(`<p>La cantidad de puntos que ganés se traducirá en la obtención de diferentes medallas, que irás desbloqueando conforme avance el experimento:</p>
-        <img src="src/img/medals/MedalDisplay.jpg" width="700" height="175">
-        <p>Los puntos necesarios para ganar cada medalla están calibrados sobre la base de estudios previos, por lo que al final del experimento te informaremos como de bien lo has hecho respecto a otros participantes.</p>`),
-        wrapper(`<p>Ahora va a empezar al experimento.</p>
-        <p>El experimento va a constar de dos fases, cada una con ${`${blocks.toString()} bloque${(blocks > 1)?`s`:``}`} de 24 ensayos.</p>
-        <p>Entre bloques podrás descansar si lo necesitas.</p>
-        <p>La duración aproximada del experimento será de 40 minutos.</p>
-        <p>Si quieres repasar las instrucciones, pulsa <b>retroceder</b>. Si quieres continuar, pulsa <b>seguir</b>.`, true),
-    ],
+    type: jsPsychInstructions,
+    pages: () => {
+        const urlvar = (jatos_run)? jatos.urlQueryParameters : jsPsych.data.urlVariables();
+        const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
+        const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
+
+
+        return [
+            wrapper(`<p>Has terminado la práctica, ¡muy bien!</p>
+            <p>En el experimento van a cambiar algunas respecto a lo que has hecho en la práctica.</p>
+            <p>En primer lugar, en función de tu desempeño, en la tarea <b>podrás ganar o perder una determinada cantidad de puntos</b> en cada ensayo. Si respondes correctamente ganarás puntos, mientras que si fallas perderás puntos. 
+            Por otro lado, cuanto más rápido respondas, más puntos ganarás (si la respuesta es correcta) o perderás (si no lo es), mientras que si respondes con mayor lentitud la cantidad de puntos ganados o perdidos será menor. En todo caso, si tardas demasiado en contestar no ganarás ni perderás puntos. </p>
+            <p>Por tanto, para maximizar la cantidad de puntos que es posible obtener, intenta responder lo más rápido que puedas sin cometer errores.</p>`),
+            wrapper(`<p>Otra cosa que va a cambiar en el experimento es que en algunos ensayos uno de <b>los círculos que acompañan al rombo podrán aparecer en otro color</b>. Los colores en los que puede aparecer el círculo son <b>${colors_t(colorHigh)}</b> y <b>${colors_t(colorLow)}</b>.</p>
+            <div style = "display: flex; flex-direction: row; justify-content: space-around; margin: 30px auto;">
+            <canvas id="myCanvas1" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
+            <canvas id="myCanvas2" width="400" height="300" style = "border-radius: 3%; background-color: #000"></canvas>
+            </div>
+            <p><b>El color de los círculos influirá en la cantidad de puntos que puedes ganar</b>.</p>
+            <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b> <b>ganarás (o perderás) 10 veces más puntos</b> de lo habitual.</p>
+            <p>En el caso de que uno de los círculos aparezca de color <b>${colors_t(colorLow)}</b> no ganarás ni perderás puntos extra.</p>
+            <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
+            wrapper(`<p>La cantidad de puntos que ganés se traducirá en la obtención de diferentes medallas, que irás desbloqueando conforme avance el experimento:</p>
+            <img src="src/img/medals/MedalDisplay.jpg" width="700" height="175">
+            <p>Los puntos necesarios para ganar cada medalla están calibrados sobre la base de estudios previos, por lo que al final del experimento te informaremos como de bien lo has hecho respecto a otros participantes.</p>`),
+            wrapper(`<p>Ahora va a empezar al experimento.</p>
+            <p>El experimento va a constar de dos fases, cada una con ${`${blocks.toString()} bloque${(blocks > 1) ? `s` : ``}`} de 24 ensayos.</p>
+            <p>Entre bloques podrás descansar si lo necesitas.</p>
+            <p>La duración aproximada del experimento será de 40 minutos.</p>
+            <p>Si quieres repasar las instrucciones, pulsa <b>retroceder</b>. Si quieres continuar, pulsa <b>seguir</b>.`, true),
+        ]
+    },
     allow_keys: false,
     button_label_previous: "Retroceder",
     button_label_next: "Seguir",

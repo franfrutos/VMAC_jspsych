@@ -17,30 +17,7 @@ console.log(`Random seed: ${seed}`)
 
 const counterbalance = random(0, 4);
 
-// Experiment parameters
-// Problem setting up query parameters for jatos!!!
-var norew, prac, blocks, trialObj, colorHigh, colorLow;
-if (!jatos_run) {
-    const urlvar = jsPsych.data.urlVariables();
-    norew = (urlvar.phase != undefined && ["Reversal", "Devaluation", "Omission"].includes(capitalize(urlvar.phase)))? 
-    capitalize(urlvar.phase): 
-    "Extinction";
-    blocks = (Number(urlvar.blocks) == 0)? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
-    prac = (urlvar.blocks == 0 && urlvar.blocks != undefined)? false : urlvar.prac != "false" && true;
+console.log(`Counterbalance: ${counterbalance}`)
 
-
-    if (urlvar.phase == undefined) console.log("No phase parameter used. Default is Extinction.")
-    else if (!["Reversal", "Devaluation", "Omission"].includes(capitalize(urlvar.phase))) console.log(`WARNING: an invalid phase parameter was used: ${urlvar.phase}. Phase has been set to Extinction.`);
-
-    console.log(`Experiment Parameters
-    Phase: ${norew}. Blocks: ${blocks}. Practice: ${prac}`);
-
-
-    trialObj = create_trials(blocks, norew, prac);
-    [colorHigh, colorLow] = (blocks != 0)? trialObj["Reward"][1].colors: ["orange", "blue"];
-    if (blocks != 0) console.log(`Color high is ${colorHigh}. Color low is ${colorLow}.`)
-
-} else {
-    norew = "Extinction"; blocks = 12; prac = true; [colorHigh, colorLow] = [color2hex("orange"), color2hex("green")]; trialObj = create_trials(blocks, norew, prac);
-}
+var trialObj;
 
