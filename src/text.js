@@ -1,3 +1,4 @@
+
 const wrapper = (text, width = false, bottom = false) => {
     return `<div class = "inst" style = \"${(width)?"min-width:100%;": ""}
     ${(bottom)?"margin-bottom:60px;": ""}\"> ${text}</div>`
@@ -266,7 +267,31 @@ const welcome = {
     <p>Antes de empezar, es necesario que realices este experimento en una <b>habitación tenuemente iluminada</b>, con el menor número de distracciones posible: <b>apaga el teléfono (o ponlo en silencio)</b>.</p>
     <p style="margin-bottom: 2rem;"><b>No cierres ni recargues esta página hasta que se te indique que el experimento ha finalizado</b>.</p>
     <p style="margin-bottom: 3rem;">Una vez te asegures de cumplir con lo expresado arriba, pulsa <b>continuar</b> para empezar.</p>`),
-    choices: ['continuar']
+    choices: ['continuar'],
+    on_load: () => {
+        // jatos functions must be used inside jatos.onLoad().
+        if (jatos_run) {
+            const urlvar = jatos.urlQueryParameters;            ;
+            norew = (urlvar.phase != undefined && ["Reversal", "Devaluation", "Omission"].includes(capitalize(urlvar.phase)))? 
+            capitalize(urlvar.phase): 
+            "Extinction";
+            blocks = (Number(urlvar.blocks) == 0)? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
+            prac = (urlvar.blocks == 0 && urlvar.blocks != undefined)? false : urlvar.prac != "false" && true;
+        
+        
+            if (urlvar.phase == undefined) console.log("No phase parameter used. Default is Extinction.")
+            else if (!["Reversal", "Devaluation", "Omission"].includes(capitalize(urlvar.phase))) console.log(`WARNING: an invalid phase parameter was used: ${urlvar.phase}. Phase has been set to Extinction.`);
+        
+            console.log(`Experiment Parameters
+            Phase: ${norew}. Blocks: ${blocks}. Practice: ${prac}`);
+        
+            trialObj = create_trials(blocks, norew, prac);
+            [colorHigh, colorLow] = (blocks != 0)? trialObj["Reward"][1].colors: ["orange", "blue"];
+            console.log(`Counterbalance: ${counterbalance}`)
+            if (blocks != 0) console.log(`Color high is ${colorHigh}. Color low is ${colorLow}.`)
+        
+        }
+    }
 };
 
 const check = {
@@ -303,7 +328,7 @@ const instructions_cal = {
         wrapper(`<p>La primera prueba va a consistir en ajustar un objeto presentado por pantalla a una tarjeta con un tamaño estandarizado. Servirán tarjetas de crédito/débito, carné de conducir, DNI o la tarjeta universitaria. 
         Deberás utilizar una de dichas tarjetas para hacer que la tarjeta que aparezca por pantalla tenga el mismo tamaño. Para ello, puedes <b>arrastrar la esquina inferior derehca de la tarjeta para cambiar su tamaño</b>.</p>
         <p>Puedes probar a ajustar el tamaño de la tarjeta para prácticar antes de proceder con la calibración:</p>
-        <div id="item" style="border: none; height: 200px; width: ${aspect_ratio*200}px; background-color: #ddd; position: relative; background-image: url('src/dni.jpg'); background-size: 100% auto; background-repeat: no-repeat;">
+        <div id="item" style="border: none; height: 200px; width: ${aspect_ratio*200}px; background-color: #ddd; position: relative; background-image: url('src/img/dni.jpg'); background-size: 100% auto; background-repeat: no-repeat;">
             <div id="jspsych-resize-handle" style="cursor: nwse-resize; background-color: none; width: 25px; height: 25px; border: 5px solid red; border-left: 0; border-top: 0; position: absolute; bottom: 0; right: 0;">
             </div>
         </div>
@@ -366,7 +391,7 @@ const resize = {
     resize_units: "none",
     post_trial_gap:500,
     viewing_distance_report: "none",
-    item_path: 'src/dni.jpg',
+    item_path: 'src/img/dni.jpg',
     adjustment_prompt: `
     <div style="text-align: left;">
     <p>Haz clic y arrastra la esquina inferior derecha de la imagen hasta que tenga el mismo tamaño que una tarjeta de tamaño estandarizado sostenida contra la pantalla.</p>
@@ -461,6 +486,9 @@ const instructions_exp = {
         <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b> <b>ganarás (o perderás) 10 veces más puntos</b> de lo habitual.</p>
         <p>En el caso de que uno de los círculos aparezca de color <b>${colors_t(colorLow)}</b> no ganarás ni perderás puntos extra.</p>
         <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
+        wrapper(`<p>La cantidad de puntos que ganés se traducirá en la obtención de diferentes medallas, que irás desbloqueando conforme avance el experimento:</p>
+        <img src="src/img/medals/MedalDisplay.jpg" width="700" height="175">
+        <p>Los puntos necesarios para ganar cada medalla están calibrados sobre la base de estudios previos, por lo que al final del experimento te informaremos como de bien lo has hecho respecto a otros participantes.</p>`),
         wrapper(`<p>Ahora va a empezar al experimento.</p>
         <p>El experimento va a constar de dos fases, cada una con ${`${blocks.toString()} bloque${(blocks > 1)?`s`:``}`} de 24 ensayos.</p>
         <p>Entre bloques podrás descansar si lo necesitas.</p>
@@ -536,6 +564,7 @@ const questions = {
             distraction_rating: data.response["likert"],
             opinion_text: data.response["opinion"],
         })
+        data.response = "none"
         if (jatos_run) {
             const results = jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).csv();
             jatos.submitResultData(results);

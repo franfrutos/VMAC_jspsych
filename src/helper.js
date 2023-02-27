@@ -277,12 +277,13 @@ const create_trials = (blocks, norew, prac = true) => {
                 distractorLow[i][random(0, 6)] = 2;
                 distractorLow[i][random(0, 6, [distractorLow[i].indexOf(2)])] = 3;
             }
-        
+
             // Combining the arrays and randomize order:
-            conditionLog = shuffle(conditionLog.concat(
-                distractorAbsent,
-                distractorHigh,
-                distractorLow
+            conditionLog = conditionLog.concat(
+                shuffle(
+                    [].concat(distractorAbsent,
+                    distractorHigh,
+                    distractorLow)
                 ));
         }
         phaseLog[j].push(conditionLog);
@@ -358,3 +359,29 @@ const capitalize = (string) => {
     let lower = string.toLowerCase();
     return lower[0].toUpperCase() + lower.slice(1);
 }
+
+// Function to find participant points cut-off:
+const find_ranking = (arr, points, r = false) => {
+    // Transform array to bool and then sum up every element
+    let rank =  arr.map((e) => e < points).reduce((acc, cur) => acc+cur) - 1;
+    return (rank > 5 && !r) ? rank - 1: rank;
+}
+
+const get_medal = (rank) => {
+    return (rank >= 0)? `medal${rank}.png`: "";
+}
+
+// How many points until the next medal?
+const next_points = (arr, ranking, points) => {
+    return arr[ranking] - points;
+}
+
+const report_performance = (rank) => {
+    const performance = (rank >= 0)? [10, 30, 40, 60, 70, 90, 99][rank]: 10;
+    return `<p>Esto significa que has acumulado ${(rank >= 0)?"más puntos": "menos puntos"} que el ${performance}% de las personas que han hecho esta tarea.`
+}
+
+/* Function to save data:
+const save = (data) => {
+
+}*/
