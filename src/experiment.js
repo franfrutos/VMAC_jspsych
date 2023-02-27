@@ -1,7 +1,14 @@
 // Declaring variables
-const timeline = [];  
+const timeline = []; 
 
-let trialNum = 0, total_points = 0;
+// Points necessary for earning medals. If reversal, points cut-offs are increased by a factor of 2
+const points_cut_off = [15500, 27200, 31900, 37300, 40000, 49300, 57000].map((p) => {
+    return (norew == "Reversal") ? p * 2 : p;
+})
+
+
+let trialNum = 0, total_points = 0,  BlockNum = 0;
+
 
 // Experimental trial
 
@@ -29,11 +36,11 @@ const trial = {
             sPos: jsPsych.timelineVariable("singPos"),
             Phase: jsPsych.timelineVariable("Phase"),
             condition: jsPsych.timelineVariable("condition"),
+            Block_num: (trialNum % 24 == 0) ? ++BlockNum : BlockNum,
             trial_num: ++trialNum,
         }
     },
     on_finish: (data) => {
-        //TODO: crear una variable con la cantidad total de puntos obtenidos
         data.correct_response = (jsPsych.timelineVariable("orientation") == "vertical") ? "g":"c";
         data.correct = (jsPsych.pluginAPI.compareKeys(data.response, data.correct_response))? 1: 0;
         data.points = (data.correct)? 
@@ -42,7 +49,6 @@ const trial = {
         total_points = (total_points + data.points <= 0)? 0: total_points + data.points;
         data.total_points = total_points;
     },
-    //post_trial_gap: 500 + Math.floor(Math.random()*201),
     trial_duration: 3200,
     response_start_time: 1200,
 };
@@ -60,7 +66,9 @@ const feedback = {
             }
             const bonus = (jsPsych.timelineVariable("condition") == "High" &&
              (jsPsych.timelineVariable("Phase") != "Extinction" && jsPsych.timelineVariable("Phase") != "Devaluation")) ? 
-            `<div style="background-color: ${(acc)?`yellow`: `red`}; color: black; font-size: 2rem; font-weight: 600; padding: 40px;">${(acc)?`¡Puntos Extra!`: `Perdidas Extra`}</div></br>`: 
+            `<div style="background-color: ${(acc)?`yellow`: `red`}; color: black; font-size: 2rem; font-weight: 600; padding: 40px;">${(acc)?
+                `¡Puntos Extra!`:
+                 `Perdidas Extra`}</div></br>`: 
             '<div></div></br>';
             const points = jsPsych.data.get().last(1).values()[0].points;
             const gains = (acc)? 
@@ -74,11 +82,6 @@ const feedback = {
         const phase = jsPsych.data.get().last(1).values()[0].Phase;
         if ((phase == "Practice" && trialNum == 24) || (phase != "Reward" && trialNum == (24*blocks)*2)) return 1000
     },
-    data: () => {
-        return {
-            trial_num: trialNum,
-        }
-    },
     trial_duration: 700,
     choices: ["NO_KEYS"],
 }
@@ -86,10 +89,18 @@ const feedback = {
 const rest = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: () => {
-        // TODO: dar feedback de los puntos ganados en cada bloque.
+        const rank = find_ranking(points_cut_off, total_points);
+        const disp_medals = (rank >= 0) ?`
+            <p>Has desbloqueado la siguiente medalla:</p>
+            <img src="src/img/medals/${get_medal(rank)}" width="150" height="150">`: "";
+        const next = (rank <= 4)?
+            `<p>Te quedan ${formatting(next_points(points_cut_off, rank+1, total_points).toString())} puntos para desbloquear la siguiente medalla.</p>`:
+             "";
+
         return `
-        <p>Has terminado un bloque experimental.</p>
+        <p>Has completado ${BlockNum-1} de ${blocks*2} Bloques.</p>
         <p>Llevas ${formatting(total_points.toString())} puntos acumulados.</p>
+        ${disp_medals + next}
         <p>Pulsa la barra espaciadora cuando quieras continuar.</p>
          `
     },
@@ -104,6 +115,7 @@ const rest = {
 
 const transition = {
     type: jsPsychHtmlKeyboardResponse,
+    // Hay que escalar los puntos en función de la segunda fase
     stimulus: () => {
         if (norew == "Reversal") {
             return `<p>Has terminado la primera mitad del experimento.</p>
@@ -114,9 +126,9 @@ const transition = {
         }
         if (norew == "Extinction") {
             return `<p>Has terminado la primera mitad del experimento.</p>
-            <p style="width:80%">Ahora vas a continuar con la tarea, pero a partir de ahora el círculo ${colors_t(colorHigh)} ya no señala puntos extra. 
+            <p style = "width: 80%; margin: auto">Ahora vas a continuar con la tarea, pero a partir de ahora el círculo ${colors_t(colorHigh)} ya no señala puntos extra. 
             Ganarás los puntos que correspondan a tu rapidez en aciertos, 
-            como en el caso de los ensayos donde no hay colores o donde aparece el círculo ${colors_t(colorLow)} ganarás más puntos.</p>
+            como en el caso de los ensayos donde no hay colores o donde aparece el círculo ${colors_t(colorLow)}.</p>
             <p>Pulsa la barra espaciadora para continuar con el experimento.</p>`
         } if (norew == "Omission") {
             return `<p>Has terminado la primera mitad del experimento.</p>
@@ -133,28 +145,29 @@ const transition = {
             const results = jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).csv();
             jatos.submitResultData(results);
         }
-        if (blocks == 0) {
-            document.body.classList.remove("black");
-            document.body.style.cursor = 'auto';
-        }
     }
 }
 
 const report = {
-    type: jsPsychHtmlButtonResponse,
+    type: jsPsychHtmlKeyboardResponse,
     stimulus: () => {
+        const rank = find_ranking(points_cut_off, total_points, r = true);
+        const medal = (rank >= 0)? `<p>Has acumulado ${formatting(total_points.toString())} puntos y desbloqueado la siguiente medalla: </p>
+        <img src="src/img/medals/${get_medal((rank > 5) ? rank - 1: rank)}" width="150" height="150">`: 
+        `<p>Has acumulado ${formatting(total_points.toString())} puntos.</p>`;
         return `<p>Acabas de terminar el experimento.</p>
-        <p>Has ganado ${formatting(total_points.toString())} puntos.</p>
-        <p>¡Muy bien!</p>
+        ${medal + report_performance(rank)}
         <p>Antes de salir de esta página nos gustaría que respondieses unas breves preguntas.</p>
-        <p>Pulsa continuar para seguir.</p>`
+        <p>Pulsa la barra espaciadora para seguir.</p>`
     },
-    choices: ['Continuar'],
+    choices: [' '],
         on_finish: () => {
-        if (jatos_run == true) {
+        if (jatos_run) {
             const results = jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).csv();
             jatos.submitResultData(results);
         }
+        document.body.classList.remove("black");
+        document.body.style.cursor = 'auto';
     }
 };
 
@@ -162,8 +175,7 @@ const report = {
 const if_nodeRest = {
     timeline: [rest],
         conditional_function: () => {
-        const current_trial = jsPsych.data.get().last(1).values(0)[0].trial_num;
-        return (current_trial % 24 == 0 && current_trial != 24*blocks) && (current_trial % 24 == 0 && current_trial != (24*blocks)*2);
+        return (trialNum % 24 == 0 && trialNum != 24*blocks) && (trialNum % 24 == 0 && trialNum != (24*blocks)*2);
     },
 }
 
@@ -220,27 +232,21 @@ const procedure_prac = {
     repetitions: 1,
     randomize_order: false,
     post_trial_gap: () => {if (prac == false) return 1000},
-    on_finish: (data) => {
-        if (data.trial_num == 24 ||prac == false) {
+    on_finish: () => {
+        if (trialNum == 24 ||prac == false) {
             document.body.classList.remove("black");
             document.body.style.cursor = 'auto';
             trialNum = 0;
+            BlockNum = 0;
         }
     }
 }
 
 const procedure_exp = {
-    // Pre_no: aquí, el contenido va a variar en función de la fase especificada.
     timeline: [instructions_exp, pre_exp, if_reward, transition, if_noreward],
     repetitions: 1,
     randomize_order: false,
     //post_trial_gap: 1000,
-    on_finish: (data) => {
-        if (data.trial_num == (24*blocks)*2) {
-            document.body.classList.remove("black");
-            document.body.style.cursor = 'auto';    
-        }
-    }
 }
 
 const download = {
@@ -261,6 +267,14 @@ const if_download = {
     }
 }
 
-timeline.push(check, procedure_cal, procedure_prac, procedure_exp, full_off, report, questions, if_download);
+timeline.push(check, procedure_cal, procedure_prac, procedure_exp, report, full_off, questions, if_download);
 
-jsPsych.run(timeline);
+if (jatos_run) {
+    jatos.onLoad(() => {
+        jatos.addAbortButton();
+        jsPsych.run(timeline);
+    })
+} else {
+    jsPsych.run(timeline);
+}
+
