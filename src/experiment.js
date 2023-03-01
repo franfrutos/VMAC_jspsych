@@ -25,11 +25,11 @@ if (jatos_run) {
         const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
         if (blocks != 0) console.log(`Color high is ${colorHigh}. Color low is ${colorLow}.`)  
 
-        console.log("ID: " + jatos.urlQueryParameters['[ID]']);
+        console.log("ID: " + jatos.urlQueryParameters.ID);
 
         // Participant ID:
         jsPsych.data.addProperties({
-            ID: jatos.urlQueryParameters['[ID]'],
+            ID: jatos.urlQueryParameters.ID,
         });
 
         // Experimental trials
