@@ -13,7 +13,7 @@ jsPsych.data.addProperties({
     rng_seed: seed
 });
 
-const lab = true;
+const lab = false;
 
 console.log(`Random seed: ${seed}`)
 
