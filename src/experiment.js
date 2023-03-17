@@ -45,7 +45,7 @@ if (jatos_run) {
         const trial = {
             type: jsPsychPsychophysics,
             stimuli: () => {
-                const sF = jsPsych.data.get().last(1).values()[0].px2deg;
+                const sF = (lab)? 4: jsPsych.data.get().last(1).values()[0].px2deg;
                 const log = jsPsych.timelineVariable("trialLog");
                 // Stimulus size is determined to an scaling factor that transform pixels to degrees of visual angle
                 return draw_display(1.15 * sF, 0.1 * sF, 5.05 * sF, log, jsPsych.timelineVariable("colors"), jsPsych.timelineVariable("orientation"));
@@ -79,7 +79,7 @@ if (jatos_run) {
                 total_points = (total_points + data.points <= 0) ? 0 : total_points + data.points;
                 data.total_points = total_points;
             },
-            trial_duration: 3200,
+            trial_duration: null,
             response_start_time: 1200,
         };
 

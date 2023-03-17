@@ -378,7 +378,7 @@ const next_points = (arr, ranking, points) => {
 
 const report_performance = (rank) => {
     const performance = (rank >= 0)? [10, 30, 40, 60, 70, 90, 99][rank]: 10;
-    return `<p>Esto significa que has acumulado ${(rank >= 0)?"más puntos": "menos puntos"} que el ${performance}% de las personas que han hecho esta tarea.`
+    return `<p>Esto significa que has acumulado ${(rank >= 0)?"más": "menos"} puntos que el ${performance}% de las personas que han hecho esta tarea.`
 }
 
 /* Function to save data:

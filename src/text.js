@@ -277,9 +277,10 @@ const welcome = {
 const check = {
     type: jsPsychBrowserCheck,
     minimum_width: 1000,
-    minimum_height: 600,
+    minimum_height: 500,
     window_resize_message: `
-    <p>La ventana de tu navegador es demasiado pequeña para completar este experimento. Por favor, maximiza el tamaño de la ventana de tu navegador. Si la ventana de tu navegador ya tiene su tamaño máximo, no podrás acceder al experimento.</p>
+    <p>La ventana de tu navegador es demasiado pequeña para completar este experimento. En caso de que estés haciendo el experimento en una tablet o teléfono móvil, cierra la ventana </p>.
+    <p> En caso de que estés haciendo el experimento en un ordenador, maximiza el tamaño de la ventana de tu navegador. Si la ventana de tu navegador ya tiene su tamaño máximo, no podrás acceder al experimento.</p>
     <p>La anchura mínima de la ventana es de <span id="browser-check-min-width"></span> px.</p>
     <p>La anchura de tu ventana es de <span id="browser-check-actual-width"></span> px.</p>
     <p>La altura mínima de la ventana es de <span id="browser-check-min-height"></span> px.</p>
@@ -472,8 +473,8 @@ const instructions_exp = {
             <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b> <b>ganarás (o perderás) 10 veces más puntos</b> de lo habitual.</p>
             <p>En el caso de que uno de los círculos aparezca de color <b>${colors_t(colorLow)}</b> no ganarás ni perderás puntos extra.</p>
             <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
-            wrapper(`<p>La cantidad de puntos que ganés se traducirá en la obtención de diferentes medallas, que irás desbloqueando conforme avance el experimento:</p>
-            <img src="src/img/medals/MedalDisplay.jpg" width="700" height="175">
+            wrapper(`<p>La cantidad de puntos que ganes se traducirá en la obtención de diferentes medallas que irás desbloqueando conforme avance el experimento:</p>
+            <img src="src/img/medals/MedalDisplay.jpg" width="700" height="165">
             <p>Los puntos necesarios para ganar cada medalla están calibrados sobre la base de estudios previos, por lo que al final del experimento te informaremos como de bien lo has hecho respecto a otros participantes.</p>`),
             wrapper(`<p>Ahora va a empezar al experimento.</p>
             <p>El experimento va a constar de dos fases, cada una con ${`${blocks.toString()} bloque${(blocks > 1) ? `s` : ``}`} de 24 ensayos.</p>

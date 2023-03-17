@@ -13,6 +13,8 @@ jsPsych.data.addProperties({
     rng_seed: seed
 });
 
+const lab = true;
+
 console.log(`Random seed: ${seed}`)
 
 const counterbalance = random(0, 4);
