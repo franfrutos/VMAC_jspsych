@@ -45,7 +45,7 @@ if (jatos_run) {
         const trial = {
             type: jsPsychPsychophysics,
             stimuli: () => {
-                const sF = (lab)? 4: jsPsych.data.get().last(1).values()[0].px2deg;
+                const sF = (lab)? 40: jsPsych.data.get().last(1).values()[0].px2deg;
                 const log = jsPsych.timelineVariable("trialLog");
                 // Stimulus size is determined to an scaling factor that transform pixels to degrees of visual angle
                 return draw_display(1.15 * sF, 0.1 * sF, 5.05 * sF, log, jsPsych.timelineVariable("colors"), jsPsych.timelineVariable("orientation"));
@@ -79,7 +79,7 @@ if (jatos_run) {
                 total_points = (total_points + data.points <= 0) ? 0 : total_points + data.points;
                 data.total_points = total_points;
             },
-            trial_duration: null,
+            trial_duration: 3200,
             response_start_time: 1200,
         };
 
@@ -342,19 +342,20 @@ if (jatos_run) {
     const trial = {
         type: jsPsychPsychophysics,
         stimuli: () => {
-            const sF = (lab)? 4: jsPsych.data.get().last(1).values()[0].px2deg;
+            const sF = (lab)? 40: jsPsych.data.get().last(1).values()[0].px2deg;
             const log = jsPsych.timelineVariable("trialLog");
+            console.log(sF*5.05)
             // Stimulus size is determined to an scaling factor that transform pixels to degrees of visual angle
             return draw_display(1.15 * sF, 0.1 * sF, 5.05 * sF, log, jsPsych.timelineVariable("colors"), jsPsych.timelineVariable("orientation"));
         },
         choices: ['g', 'c'],
         background_color: '#000000',
         canvas_width: () => {
-            const sF = jsPsych.data.get().last(1).values()[0].px2deg;
+            const sF = (lab)? 40: jsPsych.data.get().last(1).values()[0].px2deg;
             return sF * 15;
         },
         canvas_height: () => {
-            const sF = jsPsych.data.get().last(1).values()[0].px2deg;
+            const sF = (lab)? 40: jsPsych.data.get().last(1).values()[0].px2deg;
             return sF * 15;
         },
         data: () => {
@@ -376,7 +377,7 @@ if (jatos_run) {
             total_points = (total_points + data.points <= 0) ? 0 : total_points + data.points;
             data.total_points = total_points;
         },
-        trial_duration: 3200,
+        trial_duration: null, //3200
         response_start_time: 1200,
     };
 
