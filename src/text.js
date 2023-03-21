@@ -152,11 +152,11 @@ const cross_c = (ctx, x, y, r) => {
     let fromx, fromy, tox, toy;
     for (let i = 0; i < 2; i++) {
         if (i) {
-            [fromx, fromy] = [x-r/2, y];
-            [tox, toy] = [x+r/2, y]
+            [fromx, fromy] = [x-r/4, y];
+            [tox, toy] = [x+r/4, y]
         } else {
-            [fromx, fromy] = [x, y-r/2];
-            [tox, toy] = [x, y+r/2]
+            [fromx, fromy] = [x, y-r/4];
+            [tox, toy] = [x, y+r/4]
         }
         ctx.beginPath();
         ctx.moveTo(fromx, fromy);
@@ -221,6 +221,29 @@ const exp_c = () => {
     else state = false;
 }
 
+const slider_c = () => {
+    const c1 = document.getElementById("myCanvas1");
+    const c2 = document.getElementById("myCanvas2");
+
+    const urlvar = (jatos_run)? jatos.urlQueryParameters : jsPsych.data.urlVariables();
+    const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
+    const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
+
+    let [ctx1, ctx2] = [c1.getContext("2d"), c2.getContext("2d")];
+
+
+    circle_c(ctx1, 75, 75, 60, colorHigh);
+    circle_c(ctx2, 75, 75, 60, colorLow);
+
+}
+
+const slider_move = () => {
+    let [h_p, l_p] = [document.getElementById("high-placeholder"), document.getElementById("low-placeholder")];
+    let slider = document.getElementsByClassName("jspsych-slider");
+    [h_p.textContent, l_p.textContent] = [100 - slider[0].value, slider[0].value];
+
+}
+
 const prac_c = () => {
     const c = document.getElementById("myCanvas");
     if (c) {
@@ -279,8 +302,8 @@ const check = {
     minimum_width: 1000,
     minimum_height: 500,
     window_resize_message: `
-    <p>La ventana de tu navegador es demasiado pequeña para completar este experimento. En caso de que estés haciendo el experimento en una tablet o teléfono móvil, cierra la ventana </p>.
-    <p> En caso de que estés haciendo el experimento en un ordenador, maximiza el tamaño de la ventana de tu navegador. Si la ventana de tu navegador ya tiene su tamaño máximo, no podrás acceder al experimento.</p>
+    <p>La ventana de tu navegador es demasiado pequeña para completar este experimento. En caso de que estés haciendo el experimento en una tablet o teléfono móvil, cierra la ventana y sal del experimento </p>
+    <p> En caso de que estés haciendo el experimento en un ordenador, maximiza el tamaño de la ventana de tu navegador <b> pulsando la tecla F11 </b>. Si la ventana de tu navegador ya tiene su tamaño máximo, no podrás acceder al experimento.</p>
     <p>La anchura mínima de la ventana es de <span id="browser-check-min-width"></span> px.</p>
     <p>La anchura de tu ventana es de <span id="browser-check-actual-width"></span> px.</p>
     <p>La altura mínima de la ventana es de <span id="browser-check-min-height"></span> px.</p>
@@ -303,11 +326,11 @@ const instructions_cal = {
     type:jsPsychInstructions,
     pages: [
         wrapper(`<p>Antes de comenzar con el experimento vas a realizar una breve fase de calibración, que va a consistir de en dos pequeñas pruebas. 
-        Con la calibración vamos a ajustar el tamaño de los estímulos que te vamos a presentar a la distancia a la que te encuentras de la pantalla. Ahora vamos a explicarte cómo vamos a reallizar este procedimiento antes de llevarlo a cabo.</p>
+        Con la calibración vamos a ajustar el tamaño de los estímulos que te vamos a presentar a la distancia a la que te encuentras de la pantalla. Ahora vamos a explicarte cómo vamos a realizar este procedimiento antes de llevarlo a cabo.</p>
         <p>Antes de empezar con la calibración, <b>asegúrate de adoptar una posición que te permita extender las manos al teclado con comodidad</b>. Además, <b>debes intentar centrarte lo máximo que
         puedas en la pantalla de tu ordenador</b>. Intenta mantenerte en esa postura durante todo el experimento.</p>`),
         wrapper(`<p>La primera prueba va a consistir en ajustar un objeto presentado por pantalla a una tarjeta con un tamaño estandarizado. Servirán tarjetas de crédito/débito, carné de conducir, DNI o la tarjeta universitaria. 
-        Deberás utilizar una de dichas tarjetas para hacer que la tarjeta que aparezca por pantalla tenga el mismo tamaño. Para ello, puedes <b>arrastrar la esquina inferior derehca de la tarjeta para cambiar su tamaño</b>.</p>
+        Deberás utilizar una de dichas tarjetas para hacer que la tarjeta que aparezca por pantalla tenga el mismo tamaño. Para ello, puedes <b>arrastrar la esquina inferior derecha de la tarjeta para cambiar su tamaño</b>.</p>
         <p>Puedes probar a ajustar el tamaño de la tarjeta para prácticar antes de proceder con la calibración:</p>
         <div id="item" style="border: none; height: 200px; width: ${aspect_ratio*200}px; background-color: #ddd; position: relative; background-image: url('src/img/dni.jpg'); background-size: 100% auto; background-repeat: no-repeat;">
             <div id="jspsych-resize-handle" style="cursor: nwse-resize; background-color: none; width: 25px; height: 25px; border: 5px solid red; border-left: 0; border-top: 0; position: absolute; bottom: 0; right: 0;">
@@ -449,6 +472,13 @@ const pre_prac = {
     choices: [' ']
 };
 
+const call_experimenter = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: `<p>Antes de continuar, avisa al experimentador</p>`,
+    choices: ['s']
+};
+
+
 
 const instructions_exp = {
     type: jsPsychInstructions,
@@ -475,7 +505,7 @@ const instructions_exp = {
             <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
             wrapper(`<p>La cantidad de puntos que ganes se traducirá en la obtención de diferentes medallas que irás desbloqueando conforme avance el experimento:</p>
             <img src="src/img/medals/MedalDisplay.jpg" width="700" height="165">
-            <p>Los puntos necesarios para ganar cada medalla están calibrados sobre la base de estudios previos, por lo que al final del experimento te informaremos como de bien lo has hecho respecto a otros participantes.</p>`),
+            <p>Los puntos necesarios para ganar cada medalla están calibrados sobre la base de estudios previos, por lo que al final del experimento te informaremos cómo de bien lo has hecho respecto a otros participantes.</p>`),
             wrapper(`<p>Ahora va a empezar al experimento.</p>
             <p>El experimento va a constar de dos fases, cada una con ${`${blocks.toString()} bloque${(blocks > 1) ? `s` : ``}`} de 24 ensayos.</p>
             <p>Entre bloques podrás descansar si lo necesitas.</p>
@@ -512,7 +542,21 @@ const pre_exp = {
     choices: [' ']
 };
 
+const slider_instr = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: () => {
+        const urlvar = (jatos_run)? jatos.urlQueryParameters : jsPsych.data.urlVariables();
+        const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
+        const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
 
+        return wrapper(`
+        <p>Antes de terminar, te vamos a realizar algunas breves preguntas.</p>
+        <p>Como sabes, la cantidad de puntos que podías ganar dependía del color que se te presentaba en pantalla.</p>
+        <p>En tu caso, se te han podido presentar el color ${colors_t(colorHigh)} o el color ${colors_t(colorLow)}.</p>
+        <p>Ahora te vamos a pedir que estimes qué porcentaje de puntos has ganado con cada color, sobre el total de puntos que has ganado en la <b>segunda mitad del experimento</b>.</p>`)
+    },
+    choices: ["Continuar"]
+}
 
 
 const questions = {
@@ -545,16 +589,18 @@ const questions = {
     <label class="statement">¿Tienes algún comentario respecto al experimento? Puedes expresar tu opinión debajo:</label>
     <textarea id="text" name="opinion" rows="5" cols="80" style = "display: block" placeholder="Creo que el experimento..."></textarea> </br>
     </div>
-    <p style="display: block; margin-bottom: 50px">Una vez que hayas respondido a las preguntas, pulsa <b>terminar</b> para salir del experimento.</p>`,
-    button_label: "Terminar",
+    <p style="display: block; margin-bottom: 50px">Una vez que hayas respondido a las preguntas, pulsa ${(lab)? `<b>continuar</b>`:`<b>terminar</b> para salir del experimento`}.</p>`,
+    button_label: () => {
+        return (lab)? "Continuar": "Terminar";
+    },
     on_finish: (data) => {
-        jsPsych.data.addDataToLastTrial({
-            distraction_rating: data.response["likert"],
-            opinion_text: data.response["opinion"],
+        jsPsych.data.addProperties({
+            distraction_rating: data.response["likert"] || "none",
+            opinion_text: data.response["opinion"] || "none",
         })
         data.response = "none"
         if (jatos_run) {
-            const results = jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).csv();
+            const results = jsPsych.data.get().filter([{trial_type: "psychophysics"}, { trial_type: "survey-html-form" }]).json();
             jatos.submitResultData(results);
         }
     }

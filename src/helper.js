@@ -50,14 +50,14 @@ const draw_line = (length, width, angle, x, y) => {
 const draw_cross = (radius, line_w) => {
     return [{
         obj_type: 'line',
-        line_length: radius,
+        line_length: radius/2,
         line_width: line_w,
         angle: 0,
         line_color: 'white', 
         origin_center: true,
     }, {
         obj_type: 'line',
-        line_length: radius,
+        line_length: radius/2,
         line_width: line_w,
         angle: 90,
         line_color: 'white', 

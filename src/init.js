@@ -5,7 +5,12 @@ else console.log("Run in local machine.")
 
 // Initialize jsPsych
 const jsPsych = initJsPsych({
-    on_finish: () => jatos.endStudy(jsPsych.data.get().filter([{trial_type: "psychophysics"}, {trial_type: "survey-html-form"}]).csv())
+    on_finish: () => {
+        const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
+        jatos.submitResultData(results)
+            .then(jatos.endStudy)
+            .catch(() => console.log("Something went wrong"));
+    }
 });
 
 const seed = jsPsych.randomization.setSeed(Math.floor(Math.random()*9999));

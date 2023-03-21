@@ -10,13 +10,13 @@ if (jatos_run) {
         const urlvar = jatos.urlQueryParameters;
         const norew = (urlvar.phase != undefined && ["Reversal", "Devaluation", "Omission"].includes(capitalize(urlvar.phase))) ?
             capitalize(urlvar.phase) :
-            "Extinction";
+            "Reversal";
         const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
         const prac = (urlvar.blocks == 0 && urlvar.blocks != undefined) ? false : urlvar.prac != "false" && true;
 
 
         if (urlvar.phase == undefined) console.log("No phase parameter used. Default is Extinction.")
-        else if (!["Reversal", "Devaluation", "Omission"].includes(capitalize(urlvar.phase))) console.log(`WARNING: an invalid phase parameter was used: ${urlvar.phase}. Phase has been set to Extinction.`);
+        else if (!["Reversal", "Devaluation", "Omission"].includes(capitalize(urlvar.phase))) console.log(`WARNING: an invalid phase parameter was used: ${urlvar.phase}. Phase has been set to Reversal.`);
 
         console.log(`Experiment Parameters: Phase: ${norew}. Blocks: ${blocks}. Practice: ${prac}`);
 
@@ -29,7 +29,7 @@ if (jatos_run) {
 
         // Participant ID:
         jsPsych.data.addProperties({
-            ID: jatos.urlQueryParameters.ID,
+            ID: jatos.urlQueryParameters.ID || "not provided",
         });
 
         // Experimental trials
@@ -53,11 +53,11 @@ if (jatos_run) {
             choices: ['g', 'c'],
             background_color: '#000000',
             canvas_width: () => {
-                const sF = jsPsych.data.get().last(1).values()[0].px2deg;
+                const sF = (lab)? 40: jsPsych.data.get().last(1).values()[0].px2deg;
                 return sF * 15;
             },
             canvas_height: () => {
-                const sF = jsPsych.data.get().last(1).values()[0].px2deg;
+                const sF = (lab)? 40: jsPsych.data.get().last(1).values()[0].px2deg;
                 return sF * 15;
             },
             data: () => {
@@ -137,7 +137,7 @@ if (jatos_run) {
             choices: [' '],
             on_finish: () => {
                 if (jatos_run) {
-                    const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).csv();
+                    const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
                     jatos.submitResultData(results);
                 }
             }
@@ -172,7 +172,7 @@ if (jatos_run) {
             choices: [" "],
             on_finish: () => {
                 if (jatos_run) {
-                    const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).csv();
+                    const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
                     jatos.submitResultData(results);
                 }
             }
@@ -193,7 +193,7 @@ if (jatos_run) {
             choices: [' '],
             on_finish: () => {
                 if (jatos_run) {
-                    const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).csv();
+                    const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
                     jatos.submitResultData(results);
                 }
                 document.body.classList.remove("black");
@@ -297,7 +297,63 @@ if (jatos_run) {
             }
         }
 
-        timeline.push(check, procedure_cal, procedure_prac, procedure_exp, report, full_off, questions, if_download);
+        const if_call = {
+            timeline: [call_experimenter],
+            conditional_function: () => {
+                return lab;
+            }
+        }
+
+        const out_id = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: () => {
+                const id = jsPsych.data.get().last(1).values()[0].ID;
+                return `
+                    <p>Antes de terminar del experimento, apunta tu código de participante: ${id}</p>
+                `
+            },
+            choices: ["Salir del experimento"]
+        }
+
+        
+    const slide = {
+        type: jsPsychHtmlSliderResponse,
+        stimulus: () => {
+            return `<div style="width:auto; margin-bottom: 50px;">
+            <p>¿Qué porcentaje de puntos crees que has ganado con cada color?</p>
+            <div style="width:240px; float: left;">
+                <canvas id="myCanvas1" width="150" height="150" style = "border-radius: 3%; background-color: #fff; margin: 10px 0;"></canvas>
+            </div>
+            <div style="width:240px; float: right;">
+                <canvas id="myCanvas2" width="150" height="150" style = "border-radius: 3%; background-color: #fff; margin: 10px 0;"></canvas>
+            </div>
+            </div>`
+        },
+        require_movement: true,
+        labels: [`<span id="high-placeholder">50</span> % con el color ${colors_t(colorHigh)}`,
+         `<span id="low-placeholder">50</span> % con el color ${colors_t(colorLow)}`],
+        prompt: "<p>Pulsa continuar cuando hayas acabado</p>",
+        button_label: "Continuar",
+         on_load: () => {
+            document.addEventListener("click", slider_c);
+            const slider = document.getElementsByClassName("jspsych-slider");
+            slider[0].addEventListener("input", slider_move);
+    
+        },
+        on_finish: (data) => {
+            document.removeEventListener("click", slider_c);
+            jsPsych.data.addProperties({
+                contingency_rating: data.response,
+            })
+        },
+        post_trial_gap: 500,
+    };
+
+    const slider_proc = {
+        timeline: [slider_instr, slide],
+    }
+
+    timeline.push(check, procedure_cal, procedure_prac, if_call, procedure_exp, report, full_off, slider_proc, questions, out_id, if_download);
 
         jatos.addAbortButton();
         jsPsych.run(timeline);
@@ -377,7 +433,7 @@ if (jatos_run) {
             total_points = (total_points + data.points <= 0) ? 0 : total_points + data.points;
             data.total_points = total_points;
         },
-        trial_duration: null, //3200
+        trial_duration: 3200,
         response_start_time: 1200,
     };
 
@@ -435,7 +491,7 @@ if (jatos_run) {
         choices: [' '],
         on_finish: () => {
             if (jatos_run) {
-                const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).csv();
+                const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
                 jatos.submitResultData(results);
             }
         }
@@ -470,7 +526,7 @@ if (jatos_run) {
         choices: [" "],
         on_finish: () => {
             if (jatos_run) {
-                const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).csv();
+                const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
                 jatos.submitResultData(results);
             }
         }
@@ -491,7 +547,7 @@ if (jatos_run) {
         choices: [' '],
         on_finish: () => {
             if (jatos_run) {
-                const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).csv();
+                const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
                 jatos.submitResultData(results);
             }
             document.body.classList.remove("black");
@@ -595,7 +651,63 @@ if (jatos_run) {
         }
     }
 
-    timeline.push(check, procedure_cal, procedure_prac, procedure_exp, report, full_off, questions, if_download);
+    const out_id = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: () => {
+            const id = jsPsych.data.get().last(1).values()[0].ID;
+            return `
+                <p>Antes de terminar del experimento, apunta tu código de participante: ${id}</p>
+            `
+        },
+        choices: ["Salir del experimento"]
+    }
+
+    const if_call = {
+        timeline: [call_experimenter],
+        conditional_function: () => {
+            return lab;
+        }
+    }
+
+    const slide = {
+        type: jsPsychHtmlSliderResponse,
+        stimulus: () => {
+            return `<div style="width:auto; margin-bottom: 50px;">
+            <p>¿Qué porcentaje de puntos crees que has ganado con cada color?</p>
+            <div style="width:240px; float: left;">
+                <canvas id="myCanvas1" width="150" height="150" style = "border-radius: 3%; background-color: #fff; margin: 10px 0;"></canvas>
+            </div>
+            <div style="width:240px; float: right;">
+                <canvas id="myCanvas2" width="150" height="150" style = "border-radius: 3%; background-color: #fff; margin: 10px 0;"></canvas>
+            </div>
+            </div>`
+        },
+        require_movement: true,
+        labels: [`<span id="high-placeholder">50</span> % con el color ${colors_t(colorHigh)}`,
+         `<span id="low-placeholder">50</span> % con el color ${colors_t(colorLow)}`],
+        prompt: "<p>Pulsa continuar cuando hayas acabado</p>",
+        button_label: "Continuar",
+         on_load: () => {
+            document.addEventListener("click", slider_c);
+            const slider = document.getElementsByClassName("jspsych-slider");
+            slider[0].addEventListener("input", slider_move);
+    
+        },
+        on_finish: (data) => {
+            document.removeEventListener("click", slider_c);
+            jsPsych.data.addDataToLastTrial({
+                contingency_rating: data.response,
+            })
+        },
+        post_trial_gap: 500,
+    };
+
+
+    const slider_proc = {
+        timeline: [slider_instr, slide],
+    }
+
+    timeline.push(check, procedure_cal, procedure_prac, if_call, procedure_exp, report, full_off, slider_proc, questions, out_id, if_download);
 
     jsPsych.run(timeline);
 }
