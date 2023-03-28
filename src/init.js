@@ -6,10 +6,12 @@ else console.log("Run in local machine.")
 // Initialize jsPsych
 const jsPsych = initJsPsych({
     on_finish: () => {
-        const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
-        jatos.submitResultData(results)
-            .then(jatos.endStudy)
-            .catch(() => console.log("Something went wrong"));
+        if (window.jatos) {
+            const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
+            jatos.submitResultData(results)
+                .then(jatos.endStudy)
+                .catch(() => console.log("Something went wrong"));    
+        }
     }
 });
 
@@ -18,13 +20,13 @@ jsPsych.data.addProperties({
     rng_seed: seed
 });
 
-const lab = false;
+const lab = true;
 
 console.log(`Random seed: ${seed}`)
 
-const counterbalance = random(0, 4);
+const counterbalance = random(0, 6);
 
 console.log(`Counterbalance: ${counterbalance}`)
 
-var trialObj;
+var trialObj, order = 0, random_high_pos = random(1, 3);
 
