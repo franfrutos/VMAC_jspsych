@@ -126,11 +126,12 @@ const diamond_c = (ctx, x, y, r, color) => {
     ctx.stroke();
 }
 
-const line = (ctx, x, y, r, color, mode) => {
+const line = (ctx, x, y, r, color, mode, i) => {
     ctx.lineWidth = 3;
-    let fromx, fromy, tox, toy;
+    let fromx, fromy, tox, toy, pos;
     if (mode == "r") {
-        const theta = radians([45, 135][random(0, 2)]);
+        pos = (i % 2 == 0)? 0: 1;
+        const theta = radians([45, 135][pos]);
         [fromx, fromy] = [(-r / 2 * Math.cos(theta)) + x, (-r / 2 * Math.sin(theta)) + y];
         [tox, toy] = [(r / 2 * Math.cos(theta)) + x, (r / 2 * Math.sin(theta)) + y];
     } else if (mode == "h") {
@@ -175,11 +176,12 @@ const exp_c = () => {
     const urlvar = (jatos_run) ? jatos.urlQueryParameters : jsPsych.data.urlVariables();
     const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
     const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
-
+    if (c!= null && state) state = false;
+    else state = true;
     if (c) {
         if (state) state = false;
         else state = true;
-        if (state) {
+        if (!state) {
             let ctx = c.getContext("2d");
             const coordinates = xy_circle(100);
             cross_c(ctx, 200, 150, 30);
@@ -192,10 +194,10 @@ const exp_c = () => {
                     line(ctx, x, y, 30, "#fff", "h");
                 } else if (i == 5) {
                     circle_c(ctx, x, y, 30, colorHigh);
-                    line(ctx, x, y, 30, "#fff", "r");
+                    line(ctx, x, y, 30, "#fff", "r", i);
                 } else {
                     circle_c(ctx, x, y, 30, "gray");
-                    line(ctx, x, y, 30, "#fff", "r");
+                    line(ctx, x, y, 30, "#fff", "r", i);
                 }
             }
             const c2 = document.getElementById("myCanvas2");
@@ -212,16 +214,18 @@ const exp_c = () => {
                         line(ctx, x, y, 30, "#fff", "v");
                     } else if (i == 5) {
                         circle_c(ctx, x, y, 30, colorLow);
-                        line(ctx, x, y, 30, "#fff", "r");
+                        line(ctx, x, y, 30, "#fff", "r", i);
                     } else {
                         circle_c(ctx, x, y, 30, "gray");
-                        line(ctx, x, y, 30, "#fff", "r");
+                        line(ctx, x, y, 30, "#fff", "r", i);
                     }
                 }
             }
         }
     }
     const [h, v] = [document.getElementById("h"), document.getElementById("v")];
+    if (h != null && state) state = true;
+    else state = false;
     //if (h == null) counter = 0;
     if (h) {
         if (state) state = false;
@@ -235,8 +239,6 @@ const exp_c = () => {
             line(ctxv, 150, 75, 60, "#fff", "v");
         }
     }
-    if (h == null) state = true;
-    else state = false;
 }
 
 const slider_c = () => {
@@ -283,7 +285,7 @@ const prac_c = () => {
                 }
                 else {
                     circle_c(ctx, x, y, 30, "gray")
-                    line(ctx, x, y, 30, "#fff", "r")
+                    line(ctx, x, y, 30, "#fff", "r", i)
                 }
             }
         }
@@ -496,7 +498,9 @@ const pre_prac = {
     on_finish: () => {
         const urlvar = (jatos_run) ? jatos.urlQueryParameters : jsPsych.data.urlVariables();
         const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
-        if (blocks == 0) {
+        const prac = (urlvar.blocks == 0 && urlvar.blocks != undefined) ? false : (urlvar.prac == "true" || urlvar.prac == undefined) && blocks != 0;
+
+        if (blocks == 0 || prac == false) {
             document.body.classList.remove("black");
             document.body.style.cursor = 'auto';  
         }
