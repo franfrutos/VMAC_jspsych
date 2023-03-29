@@ -297,7 +297,8 @@ const welcome = {
     type: jsPsychHtmlButtonResponse,
     stimulus: wrapper(`
     <p style="margin-bottom: 2rem;">¡Bienevenida/o al experimento!</p>
-    <p>Antes de empezar, es necesario que realices este experimento en una <b>habitación tenuemente iluminada</b>, con el menor número de distracciones posible: <b>apaga el teléfono (o ponlo en silencio)</b>.</p>
+    <p>Antes de empezar, es necesario que realices este experimento en una <b>habitación tenuemente iluminada</b>, con el menor número de distracciones posible: <b>apaga el teléfono (o ponlo en silencio)</b>, <b>que no haya nadie más en la habtación</b> y <b>asegurate de evitar cualquier tipo de ruido que pueda distraerte</b>.</p>
+    <p>Para asegurarnos que puedes realizar el experimento de forma correcta, por favor, cierra cualquier programa que tengas abierto y todas las pestañas del navegador que no sean el experimento.</p>
     <p style="margin-bottom: 2rem;"><b>No cierres ni recargues esta página hasta que se te indique que el experimento ha finalizado</b>.</p>
     <p style="margin-bottom: 3rem;">Una vez te asegures de cumplir con lo expresado arriba, pulsa <b>continuar</b> para empezar.</p>`),
     choices: ['continuar'],
@@ -346,7 +347,7 @@ const instructions_cal = {
         wrapper(`<p>En la segunda prueba vamos a estimar dónde se encuentra tu punto ciego visual, cuya posición va a depender de la distancia a la que te encuentres de la pantalla. Por tanto, esta prueba es fundamental para poder ajustar el tamaño de los estímulos en pantalla.</p>
         <p>Para que puedas familirarizarte con la tarea antes de la calibración, aquí te presentamos el procedimiento que vas a tener que llevar a cabo para que puedas practicar.</p>
         <p>Intenta encontrar tu punto ciego antes de empezar la calibración:</p>
-        <ol style="max-width:90%;">
+        <ol style="max-width:100%;">
         <li>Pon la mano izquierda en la <b>barra espaciadora</b>.</li>
         <li>Tápate el ojo derecho con la mano derecha.</li>
         <li>Atiende al cuadrado negro con el ojo izquierdo. No dejes de mirarlo.</li>
@@ -410,7 +411,7 @@ const resize = {
     adjustment_button_prompt: `Haz clic aquí cuando la imagen tenga el tamaño correcto`,
     blindspot_prompt: `<p>Ahora vamos a medir a qué distancia te encuentras de la pantalla:</p>
     <div>
-    <ol style="max-width:80%; text-align: left;">
+    <ol style="max-width:90%; text-align: left;">
     <li>Pon la mano izquierda en la <b>barra espaciadora</b>.</li>
     <li>Tápate el ojo derecho con la mano derecha.</li>
     <li>Atiende al cuadrado negro con el ojo izquierdo. No dejes de mirarlo.</li>
@@ -525,6 +526,19 @@ const instructions_exp = {
             <img src="src/img/medals/MedalDisplay.jpg" width="700" height="165">
             <p>Los puntos necesarios para ganar cada medalla están calibrados sobre la base de estudios previos, por lo que al final del experimento te informaremos cómo de bien lo has hecho respecto a otros participantes.</p>`): 
             null,
+            wrapper(`<p>Dentro de cada figura aparecerá una línea. Tu tarea consistirá en <b>determinar la orientación de la línea que se encuentra dentro del rombo</b>.</p>
+            <div style = "display: flex; flex-direction: row; justify-content: space-around; margin-top: 30px;">
+            <div>
+            <canvas id="h" width="300" height="150" style = "border-radius: 3%; background-color: #000"></canvas>
+            <p><b>Si la línea es horizontal, pulsa B.</b></p>
+            </div>
+            <div>
+            <canvas id="v" width="300" height="150" style = "border-radius: 3%; background-color: #000"></canvas>
+            <p><b>Si la línea es vertical, pulsa J.</b></p>
+            </div>
+            </div>
+            <p>Es necesario que <b>utilices ambas manos</b> para emitir una respuesta. Para ello, <b>coloca el dedo índice de tu mano izquierda sobre la tecla B</b> y <b>el dedo índice de tu mano derecha sobre la tecla J</b>
+            mientras estás realizando el experimento.</p>`),
             `<p>Antes de empezar el experimento, deberás contestar a unas breves preguntas para comprobar que has comprendido las instrucciones.</p>
             <p>Pulsa seguir si quieres empezar</p>`,
         ]

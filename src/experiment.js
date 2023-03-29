@@ -418,7 +418,7 @@ if (jatos_run) {
             const sF = (lab)? 40: jsPsych.data.get().last(1).values()[0].px2deg;
             const log = jsPsych.timelineVariable("trialLog");
             // Stimulus size is determined to an scaling factor that transform pixels to degrees of visual angle
-            return draw_display(1.15 * sF, 0.3 * sF, 5.05 * sF, log, jsPsych.timelineVariable("colors"), 
+            return draw_display(1.15 * sF, 0.2 * sF, 5.05 * sF, log, jsPsych.timelineVariable("colors"), 
             jsPsych.timelineVariable("orientation"), jsPsych.timelineVariable("Phase"), jsPsych.timelineVariable("condition"),
             jsPsych.timelineVariable("jitters"));
         },
@@ -558,13 +558,6 @@ if (jatos_run) {
                     document.body.classList.remove("black");
                     document.body.style.cursor = 'auto';
                 }
-            }
-            if (phase == "WM") {
-                if (blocksWM*20 == trialNum) {
-                    document.body.classList.remove("black");
-                    document.body.style.cursor = 'auto';    
-
-                }            
             }
         }
     }
