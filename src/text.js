@@ -221,7 +221,21 @@ const exp_c = () => {
             }
         }
     }
-    if (c) state = true;
+    const [h, v] = [document.getElementById("h"), document.getElementById("v")];
+    //if (h == null) counter = 0;
+    if (h) {
+        if (state) state = false;
+        else state = true;
+        if (!state) {
+            let ctxh = h.getContext("2d");
+            let ctxv = v.getContext("2d");
+            diamond_c(ctxh, 150, 75, 60, "gray");
+            line(ctxh, 150, 75, 60, "#fff", "h");
+            diamond_c(ctxv, 150, 75, 60, "gray");
+            line(ctxv, 150, 75, 60, "#fff", "v");
+        }
+    }
+    if (h == null) state = true;
     else state = false;
 }
 
@@ -526,7 +540,7 @@ const instructions_exp = {
             <img src="src/img/medals/MedalDisplay.jpg" width="700" height="165">
             <p>Los puntos necesarios para ganar cada medalla están calibrados sobre la base de estudios previos, por lo que al final del experimento te informaremos cómo de bien lo has hecho respecto a otros participantes.</p>`): 
             null,
-            wrapper(`<p>Dentro de cada figura aparecerá una línea. Tu tarea consistirá en <b>determinar la orientación de la línea que se encuentra dentro del rombo</b>.</p>
+            wrapper(`<p>Todo lo demás seguirá siendo exactamente igual. Tu tarea consistirá en <b>determinar la orientación de la línea que se encuentra dentro del rombo</b>.</p>
             <div style = "display: flex; flex-direction: row; justify-content: space-around; margin-top: 30px;">
             <div>
             <canvas id="h" width="300" height="150" style = "border-radius: 3%; background-color: #000"></canvas>
@@ -537,7 +551,7 @@ const instructions_exp = {
             <p><b>Si la línea es vertical, pulsa J.</b></p>
             </div>
             </div>
-            <p>Es necesario que <b>utilices ambas manos</b> para emitir una respuesta. Para ello, <b>coloca el dedo índice de tu mano izquierda sobre la tecla B</b> y <b>el dedo índice de tu mano derecha sobre la tecla J</b>
+            <p>Recuerda que es necesario que <b>utilices ambas manos</b> para emitir una respuesta. Para ello, <b>coloca el dedo índice de tu mano izquierda sobre la tecla B</b> y <b>el dedo índice de tu mano derecha sobre la tecla J</b>
             mientras estás realizando el experimento.</p>`),
             `<p>Antes de empezar el experimento, deberás contestar a unas breves preguntas para comprobar que has comprendido las instrucciones.</p>
             <p>Pulsa seguir si quieres empezar</p>`,
