@@ -308,6 +308,217 @@ const prac_c = () => {
     else state = false;
 }
 
+const consentInf = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus:function() {
+/*         document.getElementById("jspsychTargetMLP").style.position = "static";
+        document.getElementById("jspsychTargetMLP").style.height = "100%";
+        document.getElementById("jspsychTargetMLP").style.width = "100%";
+        document.getElementById("jspsychTargetMLP").style.top = "0%";
+        document.getElementById("jspsychTargetMLP").style.left = "0%";
+        document.getElementById("jspsychTargetMLP").style.margin = "0"; */
+
+
+        var sf = '90%';
+        var lh = '150%';
+        var mWidth = '10px 0px';
+
+        const htmlStr = `
+        <div style = "max-width:70%; margin: 2% auto;border: 1px solid #ccc; padding: 0 5%;">
+        <p><b>Hoja de Información</b><br>
+        <i style = "font-size:14px">Departamente de Psicología Experimental de la Universidad de Granada</i></p>
+        <hr>
+        <div style = "text-align:left; font-size: 16px; padding-left: 10px;">
+        <p>Nombre del estudio: Distracción visual y memoria de trabajo.</p>
+        <p>Investigador responsable: Juan Lupiáñez.</p>
+        <p>Alumno Responsable: Francisco Garre-Frutos | Email: <a href="mailto:fgfrutos@ugr.es">fgfrutos@ugr.es</a>.</p>
+        <p>Código del estudio: VMACWM</p>
+        </div>
+        <hr>
+        <p style = "font-size: 14px; text-align:left;">Lea esta información detenidamente: Se solicita su participación voluntaria en un estudio que se enmarca en el proyecto de investigación PSI2017-84926-P, financiada por el MINECO. El comité de ética de la Universidad de Granada ha aprobado la 
+        realización de este proyecto con el código: 175/CEIH/2017.Antes de participar en el estudio, por favor lea la información que le proporcionamos a continuación.</p>
+        <p style="font-size:16px"><b>Información sobre el estudio y su participación en el mismo</b></p>
+        <div style="font-size:16px;line-height:190%;margin:${mWidth};font-size:${sf};line-height:${lh}; text-align:left;">
+        <p><b>¿Cuál es el objetivo del estudio?</b><br>
+        El objetivo es este estudio es continuar una investigación ya iniciada sobre la relación entre procesos de distracción visual y memoria, donde se busca estudiar posibles sustratos comunes a ambos procesos. Este estudio lo dirige el Dr. Juan Lupiáñez y su equipo colaborador. El estudio tendrá lugar en modalidad online, en el ordenador personal de la persona que realiza el estudio. 
+        </p>
+        <p><b>¿Qué procedimientos llevaré a cabo?</b><br>
+        Su participación consistirá en contestar algunas preguntas y realizar sencillas tareas de ordenador en las que debe discriminar y responder a distintos estímulos mientras registramos el tiempo que tarda en emitir una respuesta a cada 
+        estímulo, así como la precisión de la misma. En total el experimento durará aproxamadamente 60 minutos.
+        </p>
+        <p><b>¿Tiene algún inconveniente participar en el estudio?</b><br>
+        La tarea de ordenador no presenta ningún inconveniente para el participante, más allá del cansancio que éste pueda sentir por realizar una tarea monótona de ordenador.
+        </p>
+        <p><b>¿Se me realizará algún tipo de evaluación médica o psicológica?</b><br>
+        No, únicamente deberá realizar una tarea experimental en el ordenador.
+        </p>
+        <p><b>¿Tiene algún beneficio participar en el estudio?</b><br>
+        Este estudio no le producirá ningún beneficio directo, pero proporcionará conocimientos científicos sobre la cognición y la conducta humana. Además si el participante estudia el grado de Psicología, será recompensado con dos papeletas experimentales.
+        </p>
+        <p><b>Confidencialidad</b><br>
+        Para proteger su privacidad, la información recogida sobre usted se etiquetará tan sólo con un código numérico. Sus resultados se almacenarán en papel o en formato electrónico, sin identificarle por el nombre, y se utilizarán solamente dentro del contexto del proyecto. Los resultados derivados de este estudio pueden publicarse en alguna revista científica o
+        congreso, sin prejuicio del compromiso de confidencialidad. El acceso a estos datos queda restringido a nuestro equipo de investigación.
+        </p>
+        <p><b>Acuerdo de participación en el estudio</b><br>
+        Esta hoja contiene información para que usted pueda decidir si desea participar en este estudio. Si tiene alguna pregunta que permanezca sin contestar, por favor pregunte al encargado del estudio antes de firmar este formulario. Puede contactar con el investigador principal, Dr. Juan Lupiáñez a través del e-mail: <a href="mailto:jlupiane@ugr.es">jlupiane@ugr.es</a>.
+        Si le surge cualquier duda que no desee transmitir al Dr. Juan Lupiáñez, puede usted ponerse en contacto con la Directora del CIMCYC, Dr. María Ruz a través de email (<a href="mailto:cimcyc@ugr.es">cimcyc@ugr.es</a>).
+        <br><br>La participación en este estudio es voluntaria, y no tiene que participar en el estudio si usted no lo quiere. Si decide finalmente participar, recibirá una copia de esta descripción.
+        </div>
+        <p style="font-size:16px"><b>Información <u>adicional</u> sobre protección de datos</b></p>
+        <div style="font-size:16px;line-height:190%;margin:${mWidth};font-size:${sf};line-height:${lh}; text-align:left;">
+        <p><b>¿Quién es el responsable del tratamiento de sus datos?</b><br>
+        <b>Identidad</b>: Secretaría General de la Universidad de Granada<br>
+        Dirección postal: Hospital Real<br>
+        Avenida del Hospicio s/n<br>
+        18071 Granada<br>
+        Teléfono: + 34 958 243021<br>
+        Correo electrónico:<a href="mailto:protecciondedatos@ugr.es">protecciondedatos@ugr.es</a><br><br>
+        <b>Contacto Delegada de protección de datos</b>: <a href="mailto:delegadapd@ugr.es">delegadapd@ugr.es</a>
+        </p>
+        <p><b>¿Con qué finalidad tratamos sus datos personales?</b><br>
+        Explorar la captura atencional de los estímulos objetivos y distractores de los participantes con el fin de continuar con una investigación ya iniciada, y gestión de la recogida de datos personales.
+        </p>
+        <p><b>Plazo previsto de conservación de datos:</b><br>
+        Los datos se conservarán durante el tiempo necesario para cumplir con la finalidad para la que se recabaron y para determinar las posibles responsabilidades que se pudieran derivar de dicha finalidad y del tratamiento de los datos.
+        </p>
+        <p><b>Decisiones automatizadas, perfiles y lógica aplicada:</b><br>
+        Sus datos no se utilizarán para decisiones automatizadas ni para la elaboración de perfiles.
+        </p>
+        <p><b>¿Cuál es la legitimación para el tratamiento de sus datos?</b><br>
+        El interesado dio su consentimiento explícito para el tratamiento de dichos datos personales los fines especificados. (Art. 6.1.a, y Art.9.2.a) del Reglamento General de Protección de datos del Reglamento General de Protección de Datos.
+        </p>
+        <p><b>¿Cuáles son sus derechos respecto al tratamiento de sus datos?</b><br>
+
+        Usted tiene derecho:
+        <ul style="padding-left:10%;">
+        <li>Retirar el consentimiento prestado en el momento que lo desee.</li>
+<li>Solicitar el acceso a los datos personales que tratamos sobre usted.</li>
+<li>Solicitar su rectificación o supresión.</li>
+<li>Solicitar la portabilidad de sus datos.</li>
+<li>En determinadas circunstancias, solicitar la limitación del tratamiento de sus datos, en cuyo caso únicamente los
+conservaremos para el ejercicio o la defensa de reclamaciones.</li>
+<li>En determinadas circunstancias y por motivos relacionados con su situación particular, oponerse al tratamiento de
+sus datos. La UGR dejará de tratar los datos, salvo por motivos legítimos o el ejercicio o la defensa de posibles
+reclamaciones.</li>
+        </ul>
+        Estos derechos podrán ejercerse ante el responsable del tratamiento indicado anteriormente.<bR><br>
+        La normativa e impresos están disponibles en la siguiente dirección:
+        <a href="http://secretariageneral.ugr.es/pages/proteccion_datos/derechos">http://secretariageneral.ugr.es/pages/proteccion_datos/derechos</a><br><br>
+        Puede asimismo obtener información en la siguiente dirección de correo electrónico: protecciondedatos@ugr.es<br><br>
+        Asimismo, le informamos de que si usted presenta una solicitud para el ejercicio de estos derechos y considera que no
+        ha sido atendida adecuadamente por nuestra institución, puede presentar una reclamación ante la Agencia Española de
+        Protección de Datos de acuerdo con el procedimiento previsto en la siguiente dirección:
+        <a href = "https://sedeagpd.gob.es/sede-electronica-web/vistas/formReclamacionDerechos/reclamacionDerechos.jsf">https://sedeagpd.gob.es/sede-electronica-web/vistas/formReclamacionDerechos/reclamacionDerechos.jsf</a>
+        </p>
+        <p><b>¿A qué destinatarios se comunicarán sus datos?</b><br>
+        No se prevén cesiones o comunicaciones de datos. No se efectúan transferencias internacionales.
+<p><b>¿Cómo hemos obtenido sus datos?</b><br>
+Los datos personales objeto de tratamiento son los que usted mismo nos ha facilitado. Las categorías de datos que
+tratamos son: <br><br>
+Datos de carácter identificativo: Apellidos, nombre, DNI/NIF, correo electrónico, firma.<br>
+Datos de características personales: edad, sexo.<br>
+Datos de categorías especiales: salud (ejecución en la tarea de ordenador).
+</p>
+        </div>
+        </div>`;
+
+        return htmlStr;
+    },
+    choices: ['<p style="font-size:130%;line-height:0%;"><b>Continuar</b></p>'],
+    button_html: '<button class="jspsych-btn" style = "margin-bottom:50px;">%choice%</button>'
+};
+
+const consentConf = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus:function() {
+/*         document.getElementById("jspsychTargetMLP").style.position = "static";
+        document.getElementById("jspsychTargetMLP").style.height = "100%";
+        document.getElementById("jspsychTargetMLP").style.width = "100%";
+        document.getElementById("jspsychTargetMLP").style.top = "0%";
+        document.getElementById("jspsychTargetMLP").style.left = "0%";
+        document.getElementById("jspsychTargetMLP").style.margin = "0"; */
+
+
+        const html = `
+<div style=" text-align:left; font-size: 14px; max-width:90%; margin: 2% auto;border: 1px solid #ccc; padding: 0 5%;">
+<p style="text-align:center";><b>CONSENTIMIENTO POR ESCRITO DEL/LA PARTICIPANTE SOBRE PARTICIPACIÓN Y TRATAMIENTO DE DATOS PERSONALES</b></p>
+
+<ul style="text-align:left">
+  <li>He leído la hoja de información que se me ha entregado.</li>
+  <li>Comprendo que mi participación es voluntaria.
+  <li>Comprendo que puedo retirarme del estudio:
+      <ol>
+      <li>Cuando quiera</li>
+      <li>Sin tener que dar explicaciones</li>
+    </ol>
+  </li>
+  </li>
+</ul>
+
+<p>Presto libremente mi conformidad para participar en el estudio. Los resultados obtenidos en este estudio solo serán utilizados para los fines específicos del mismo.</p>
+
+<p>Derecho explícito de la persona a retirarse del estudio. Garantías de confidencialidad. La participación en el estudio es libre y voluntaria. En cualquier momento la persona podrá retirarse del estudio y siempre agradeceremos su participación. Los datos de los participantes serán anónimos en todo caso. En aquellas situaciones en las que sea necesario retener la identidad de la persona, los archivos asociando su nombre con el código de sus datos se mantendrán en ordenadores protegidos por contraseña de seguridad y/o en archivadores bajo llave custodiada por la investigadora principal. Los datos serán utilizados para su análisis y posterior estudio por la investigadora principal y los miembros del grupo investigador.</p>
+
+<table border="1" cellpadding="1" cellspacing="1">
+	<tbody>
+		<tr>
+			<td>
+			<p style="text-align: center;"><strong>Responsable</strong></p>
+			</td>
+			<td style="text-align: left;">
+			<p style="margin-left: 40px;">UNIVERSIDAD DE GRANADA</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+			<p style="text-align: center;"><strong>Legitimación</strong></p>
+			</td>
+			<td>
+			<p style="margin-left: 40px;">La/el interesada/o&nbsp;ha dado su consentimiento para el tratamiento de sus datos personales para uno o varios fines específicos; legitimado en el art. 6.1 a y. 9.2.a RGPD)</p>
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: center;"><strong>Finalidad</strong></td>
+			<td>
+			<p style="margin-left: 40px;">Gestión de la recogida y tratamiento de datos personales. <span style="background-color:#ffffff;">Medición de variables relacionadas con hábitos de consumo, hábitos de sueño y ejercicio y variables psicológicas.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: center;"><strong>Destinatarios</strong></td>
+			<td>
+			<p style="margin-left: 40px;">No se prevén cesiones o comunicaciones de datos</p>
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: center;"><strong>Derechos</strong></td>
+			<td>
+			<p style="margin-left: 40px;">Tiene derecho a retirar su consentimiento y a solicitar el acceso, oposición, rectificación, supresión, portabilidad o limitación del tratamiento de sus datos, tal y como se explica en la información adicional</p>
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: center;"><strong>Información adicional</strong></td>
+			<td>
+			<p style="margin-left: 40px;">La/el interesada/o ha leído y puede remitirse a esa información en el siguiente <a href="https://drive.ugr.es/index.php/s/ipDyMuDcKkPVgQM" onclick="window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;">enlace</a>.</p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<br>
+</div>
+<br>`;
+        return html;
+
+    },
+    on_finish: (data) => {
+        if (data.response == 1) {
+            not_consent = true;
+        };
+
+    },
+    choices: ['<p style="font-size:110%;line-height:0%;"><b>Doy mi consentimiento</b></p>', '<p style="font-size:110%;line-height:0%;"><b>No doy mi consentimiento</b></p>'],
+    button_html: '<button class="jspsych-btn" style = "margin-bottom:50px;">%choice%</button>'
+
+};
 
 const welcome = {
     type: jsPsychHtmlButtonResponse,
@@ -319,6 +530,98 @@ const welcome = {
     <p style="margin-bottom: 3rem;">Una vez te asegures de cumplir con lo expresado arriba, pulsa <b>continuar</b> para empezar.</p>`),
     choices: ['continuar'],
 };
+
+const limit = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: wrapper(`<p>Si estás leyendo esto, es que se ha alcanzado el número de participantes deseado. Por tanto, ahora mismo no es posible participar en el estudio.</p>
+    <p>En el caso de que más adelante el estudio siga público en la página de SONA, podrás participar sin ningún problema.</p>
+    <p>Cierra esta pestaña para abandonar el estudio.</p>`),
+    choices: "NO_KEYS",
+};
+
+const out_consent = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: wrapper(`<p>Si estás leyendo esto, es que no has dado el consentimiento necesario para participar en el estudio.</p>
+    <p>En caso de que haya sido un error, puedes volver a acceder en el estudio desde <a href = "https://ugr-cimcyc.sona-systems.com/">la página de SONA</a>.</p>
+    <p>Si has decidido no participar, puedes cerrar esta pestaña cuando quieras.</p>`, width = true, amount = 100),
+    choices: "NO_KEYS",
+};
+
+const if_out_cons  = {
+    timeline: [out_consent],
+    conditional_function: () =>{
+        return not_consent;
+    }
+}
+
+const demo_quests = {
+    type: jsPsychSurvey,
+    pages: [
+        [
+            {
+                type: 'multi-choice',
+                prompt: "¿Cuál es tu género?",
+                name: 'gender',
+                options: ['Masculino', 'Femenino', 'No binario'],
+                required: true
+            },
+            {
+                type: 'text',
+                prompt: "¿Cuál es tu edad?",
+                name: 'age',
+                input_type: "number",
+                textbox_columns: 5,
+                required: true,
+            },
+        ],
+        [
+            {
+                type: 'text',
+                prompt: "¿Cuál es tu Idioma Nativo?",
+                input_type: "text",
+                name: 'lenguage',
+                textbox_columns: 10,
+                required: true,
+            },
+            {
+                type: 'multi-choice',
+                prompt: "En caso de que el español no sea tu idioma nativo, ¿Cuál es tu nivel de español?",
+                name: 'spanish_level',
+                options: ["B1 - Intermedio", "B2 - Intermedio alto", "C1 - Avanzado", "C2 - Maestría"],
+                required: false,
+            },
+        ],
+        [
+            {
+                type: 'multi-choice',
+                prompt: "¿Tienes problemas de visión?",
+                name: 'vision',
+                options: ["No", "Sí, pero uso gafas y/o lentillas", "Sí, y no uso gafas y/o lentillas"],
+                required: true,
+            },
+            {
+                type: 'multi-choice',
+                prompt: "¿Tienes problemas en la percepción del color o algún tipo de daltonismo?",
+                name: 'color_perception',
+                options: ["No", "Sí"],
+                required: true,
+            },
+        ],
+    ],
+    required_error_text: "Debes responder esta pregunta.",
+    title: "Preguntas socio-demográficas",
+    button_label_next: "Siguiente",
+    button_label_back: "Anterior",
+    button_label_finish: "Terminar"
+};
+
+ const consent_proc = {
+    timeline: [consentInf, consentConf, if_out_cons, demo_quests],
+    repetitions: 1,
+    randomize_order: false,
+    //post_trial_gap: 1000,
+ }
+
 
 const check = {
     type: jsPsychBrowserCheck,

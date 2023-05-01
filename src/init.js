@@ -7,6 +7,7 @@ else console.log("Run in local machine.")
 const jsPsych = initJsPsych({
     on_finish: () => {
         if (window.jatos) {
+            finishCond();
             const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
             jatos.submitResultData(results)
                 .then(jatos.endStudy)
@@ -20,7 +21,8 @@ jsPsych.data.addProperties({
     rng_seed: seed
 });
 
-const lab = true;
+const lab = false;
+
 
 console.log(`Random seed: ${seed}`)
 
@@ -28,5 +30,5 @@ const counterbalance = random(0, 6);
 
 console.log(`Counterbalance: ${counterbalance}`)
 
-var trialObj, order = 0, random_high_pos = random(1, 3);
+var trialObj, order = 0, random_high_pos = random(1, 3), condition, not_consent = false;
 

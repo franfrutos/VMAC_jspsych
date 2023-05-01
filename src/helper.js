@@ -670,7 +670,39 @@ const report_performance = (rank) => {
     return `<p>Esto significa que has acumulado ${(rank >= 0) ? "más" : "menos"} puntos que el ${performance}% de las personas que han hecho esta tarea.`
 }
 
-/* Function to save data:
-const save = (data) => {
+// Function to get counterbalance in Jatos at the start of the experiment
+const getCond = (N) => {
+    const counter_Number = N; //Setting number of participants in each condition
+    const randomCond = random(0, jatos.batchSession.get("pending").length);
+    const condition = jatos.batchSession.find("/pending/"+randomCond);
+    if (typeof condition != 'undefined') {
+        const counterS = Number(jatos.batchSession.find("/counterS/"+condition)) + 1;
+        jatos.batchSession.replace("/counterS/"+condition, counterS) //don't use  ";"
+            .then(() => {console.log("Batch Session was successfully updated")
+                                console.log("condition: " + condition)
+            })
+            .then(() => {if (counterS == counter_Number) jatos.batchSession.move("/pending/" + randomCond, "/finished/0")
+                .then(() => console.log(condition + "has been removed from the pending list"))
+                .catch(() => {console.log("Problem with move")
+                                     setTimeout(() => getCondition(), 1)});
+            })
+            .catch(() => {console.log("Batch Session synchronization failed")
+                                 SetTimeout(() => getCondition(), 1)
+                                 getCondition()});
+        return condition;
+    }
+    return false;
+}
 
-}*/
+const finishCond = () => {
+    const counterF = Number(jatos.batchSession.find("/counterF/"+condition)) + 1;
+    jatos.batchSession.replace("/counterF/"+condition, counterF) //Don't use' ";"
+        .then(() => console.log("Batch Session was successfully updated"))
+        // .then(() => {if (persistent.counterF == 2) jatos.batchSession.move("/pending/" + persistent.randomCond, "/finished/0")
+        //     .then(() => console.log("Done"))
+        //     .catch(() => {console.log("Problem with move")
+        //                          setTimeout(() => finishCond(), 1)});
+        // })
+        .catch(() => {console.log("Batch Session synchronization failed")
+                             finshCond()});
+}
