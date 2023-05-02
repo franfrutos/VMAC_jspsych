@@ -308,6 +308,14 @@ const prac_c = () => {
     else state = false;
 }
 
+const pre_consent = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: wrapper(`<p>¡Gracias por tu interés en participar en el estudio!</p>
+    <p>Antes de comenzar, te vamos a mostrar la hoja de información del estudio y sobre el tratamiento de tus datos, así como el consentimiento informado sobre tu participación.</p>
+    <p>Al terminar deberás contestar algunas breves cuestiones socio-demográficas y de salud.</p>
+    <p>Cuando quieras comenzar pulsa <b>continuar</b>.`, true, 80),
+    choices: ['Continuar'],
+}
 const consentInf = {
     type: jsPsychHtmlButtonResponse,
     stimulus:function() {
@@ -616,7 +624,7 @@ const demo_quests = {
 };
 
  const consent_proc = {
-    timeline: [consentInf, consentConf, if_out_cons, demo_quests],
+    timeline: [pre_consent, consentInf, consentConf, if_out_cons, demo_quests],
     repetitions: 1,
     randomize_order: false,
     //post_trial_gap: 1000,
