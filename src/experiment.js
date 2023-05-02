@@ -509,7 +509,7 @@ const run_experiment = () => {
     }
 
     const procedure_cal = {
-        timeline: [welcome, instructions_cal, if_resize, full_on, if_resize],
+        timeline: [welcome, instructions_cal, full_on, if_resize],
         repetitions: 1,
         randomize_order: false,
     }
