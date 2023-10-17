@@ -26,7 +26,7 @@ const run_experiment = () => {
     const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
     if (blocks != 0) console.log(`Color high is ${colorHigh}. Color low is ${colorLow}.`)
     ID = (urlvar.ID != undefined)? urlvar.ID: randomID();
-    jatos.studySessionData.subjID = ID; // Saving ID for the next component
+    if (jatos_run) jatos.studySessionData.subjID = ID; // Saving ID for the next component
 
     console.log("ID: " + ID);
 
