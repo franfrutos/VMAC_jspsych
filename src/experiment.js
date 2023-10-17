@@ -13,41 +13,32 @@ const run_experiment = () => {
     const blocksWM = (Number(urlvar.blocksWM) == 0) ? 0 : (!isNaN(Number(urlvar.blocksWM))) ? Number(urlvar.blocksWM) : 15;
     const prac = (urlvar.blocks == 0 && urlvar.blocks != undefined) ? false : (urlvar.prac == "true" || urlvar.prac == undefined) && blocks != 0;
     const pracWM = (urlvar.blocksWM == 0 && urlvar.blocksWM != undefined) ? false : (urlvar.pracWM == "true" || urlvar.pracWM == undefined) && blocksWM != 0;
-    const gam = urlvar.gamify == "true";
-    if (jatos_run) {
-        condition = getCond(30);
-    } else {
-        condition = (urlvar?.condition != undefined) ? capitalize(urlvar.condition) : "A1";
-    }
-
-    if (jatos_run && !condition) {
-        timeline.push(limit);
-
-        jsPsych.run(timeline);
-    
-    }
+    const gam = (urlvar.gamify == "true")? true: true;
 
     if (urlvar.phase == undefined) console.log("No phase parameter used. Default is WM.")
     else if (!["Reversal", "Devaluation", "Omission"].includes(capitalize(urlvar.phase))) console.log(`WARNING: an invalid phase parameter was used: ${urlvar.phase}. Phase has been set to Extinction.`);
 
     console.log(`Experiment Parameters
-       Phase: ${norew}. Blocks: ${blocks}. Practice: ${prac}. BlocksWM: ${blocksWM}. Practice WM: ${pracWM}`);
+       Phase: ${norew}. Blocks: ${blocks}. Practice: ${prac}. BlocksWM: ${blocksWM}. Practice WM: ${pracWM}. Condition: ${condition}. gamify: ${gam}`);
 
 
     trialObj = create_trials(blocks, blocksWM, norew, prac, pracWM);
-    console.log(trialObj);
     const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
     if (blocks != 0) console.log(`Color high is ${colorHigh}. Color low is ${colorLow}.`)
+    ID = (urlvar.ID != undefined)? urlvar.ID: randomID();
+    jatos.studySessionData.subjID = ID; // Saving ID for the next component
 
-    console.log("ID: " + urlvar.ID);
+    console.log("ID: " + ID);
 
-    jsPsych.data.addProperties({
-        ID: urlvar.ID
-    });
+    // Assign condition after VMAC practice is finished:
+    const cond_func = {
+        type: jsPsychCallFunction,
+        func: () => assign_condition(urlvar.condition),
+    }
 
     // Experimental trial
 
-    // Points necessary for earning medals. If reversal, points cut-offs are increased by a factor of 2
+    // Points necessary for earning medals. If reversal, points cut-offs are increased by a factor of 1.3
     const points_cut_off = [15500, 27200, 31900, 37300, 40000, 49300, 57000].map((p) => {
         return (norew == "Reversal" & p != 15500) ? p * 1.3 : p;
     })
@@ -58,7 +49,7 @@ const run_experiment = () => {
     const trial = {
         type: jsPsychPsychophysics,
         stimuli: () => {
-            const sF = (lab) ? 40 : jsPsych.data.get().last(1).values()[0].px2deg;
+            const sF = (lab) ? 40 : jsPsych.data.get().last(1).values()[0].px2deg; // If experiment is run in lab, custom px2deg
             const log = jsPsych.timelineVariable("trialLog");
             // Stimulus size is determined to an scaling factor that transform pixels to degrees of visual angle
             return draw_display(1.15 * sF, 0.2 * sF, 5.05 * sF, log, jsPsych.timelineVariable("colors"),
@@ -71,9 +62,9 @@ const run_experiment = () => {
             } else return ["b", "j"];
         },
         background_color: '#000000',
-        canvas_width: () => {
+        canvas_width: () => { // Canvas size depends on stimulus size by default. This prevents canvas to be too small
             const sF = (lab) ? 40 : jsPsych.data.get().last(1).values()[0].px2deg;
-            return sF * 15;
+            return sF * 15; 
         },
         canvas_height: () => {
             const sF = (lab) ? 40 : jsPsych.data.get().last(1).values()[0].px2deg;
@@ -82,28 +73,28 @@ const run_experiment = () => {
         data: () => {
             let color
             if (jsPsych.timelineVariable("Phase") != "Reversal") {
-                color = (jsPsych.timelineVariable("condition") == "High") ? colorHigh : colorLow;
+                color = (jsPsych.timelineVariable("condition") == "High") ? colorHigh : (jsPsych.timelineVariable("condition") == "Low")? colorLow: "none";
             } else {
-                color = (jsPsych.timelineVariable("condition") == "Low") ? colorHigh : colorLow;
+                color = (jsPsych.timelineVariable("condition") == "Low") ? colorHigh : (jsPsych.timelineVariable("condition") == "High")? colorLow: "none";
             }
             return {
                 tPos: jsPsych.timelineVariable("targetPos"),
                 sPos: jsPsych.timelineVariable("singPos"),
                 Phase: (jsPsych.timelineVariable("Phase").includes("WM_p")) ? "Practice WM" : jsPsych.timelineVariable("Phase"),
                 condition: jsPsych.timelineVariable("condition"),
-                Block_num: (trialNum % 24 == 0) ? ++BlockNum : BlockNum,
+                Block_num: ((trialNum % 24 == 0 && jsPsych.timelineVariable("Phase").includes("Reward")) ||
+                 (trialNum % 20 == 0 && jsPsych.timelineVariable("Phase").includes("WM"))) ? ++BlockNum : BlockNum,
                 trial_num: ++trialNum,
+                type_WM:  (jsPsych.timelineVariable("Phase").includes("WM")) ? jsPsych.timelineVariable("trial_type") : "none",
                 counterbalance: counterbalance,
                 color: color,
             }
         },
         on_finish: (data) => {
-            console.log(trialNum, BlockNum);
             if (jsPsych.timelineVariable("Phase").includes("WM")) {
                 data.correct_response = (jsPsych.timelineVariable("orientation") == "Different") ? "c" : "m";
                 data.correct = (jsPsych.pluginAPI.compareKeys(data.response, data.correct_response)) ? 1 : 0;
                 if (trialNum == 6 && jsPsych.timelineVariable("Phase") == "WM_p1" || trialNum == 20 && jsPsych.timelineVariable("Phase") == "WM_p2") {
-                    console.log(trialNum, BlockNum)
                     trialNum = 0;
                     BlockNum = 0;
                 }
@@ -141,25 +132,26 @@ const run_experiment = () => {
             if (response !== null) {
                 const acc = jsPsych.data.get().last(1).values()[0].correct;
                 if (jsPsych.timelineVariable("Phase") == "Practice" || jsPsych.timelineVariable("Phase") == "Omission" || jsPsych.timelineVariable("Phase").includes("WM_p")) {
-                    return (acc) ? `<p style="color: yellow; font-size: 2rem;">Correcto</p>` :
-                        `<p style="color: red; font-size: 2rem;">Error</p>`;
+                    return (acc) ? `<p style="color: #40E0D0; font-size: 2rem;">Correcto</p>` :
+                        `<p style="color: #8765c2; font-size: 2rem;">Error</p>`;
                 }
                 if (jsPsych.timelineVariable("Phase") == "WM") {
                     return "";
                 }
                 const bonus = (jsPsych.timelineVariable("condition") == "High" &&
                     (jsPsych.timelineVariable("Phase") != "Extinction" && jsPsych.timelineVariable("Phase") != "Devaluation")) ?
-                    `<div style="background-color: ${(acc) ? `yellow` : `red`}; color: black; font-size: 2rem; font-weight: 600; padding: 40px;">${(acc) ?
+                    `<div style="background-color: ${(acc) ? `#40E0D0` : `#8765c2`}; color: black; font-size: 2rem; font-weight: 600; padding: 40px;">${(acc) ?
                         `¡Puntos Extra!` :
                         `Perdidas Extra`}</div></br>` :
                     '<div></div></br>';
                 const points = jsPsych.data.get().last(1).values()[0].points;
                 const gains = (acc) ?
-                    `<p style="color: yellow; font-size: 2rem;">+${points} puntos</p>` :
-                    `<p style="color: red; font-size: 2rem;">ERROR: ${points} puntos</p>`
+                    `<p style="color: #40E0D0; font-size: 2rem;">+${points} puntos</p>` :
+                    `<p style="color: #8765c2; font-size: 2rem;">ERROR: ${points} puntos</p>`
                 return bonus + gains;
             }
-            return "<p style='font-size: 2rem;'>Demasiado lento. Intenta responder más rápido.</p>"
+            if (jsPsych.timelineVariable("Phase") != "WM") return "<p style='font-size: 2rem;'>Demasiado lento. Intenta responder más rápido.</p>";
+            else return "";
         },
         post_trial_gap: () => {
             const phase = jsPsych.data.get().last(1).values()[0].Phase;
@@ -309,7 +301,6 @@ const run_experiment = () => {
             if (phase == "WM") return (trialNum % 20 == 0 && trialNum != 20 * blocksWM)
             if (phase == "Practice WM") return false;
             if ((trialNum % 24 == 0 && trialNum != 24 * blocks) && (trialNum % 24 == 0 && trialNum != (24 * blocks) * 2)) {
-                console.log(trialNum);
                 return true;
             } else {
                 return false;
@@ -552,9 +543,7 @@ const run_experiment = () => {
         },
         on_finish: (data) => {
             const resp = data.response;
-            console.log(resp)
             fail = resp.line != 'J' || resp.feature != 'Al estímulo con forma de rombo' || (resp.value != `Cuando en pantalla aparece el color ${colors_t(colorHigh)}` && resp.value != undefined);
-            console.log(fail)
             phase_out = "VMAC";
         }
     };
@@ -635,6 +624,7 @@ const run_experiment = () => {
         labels: ["Ninguna confianza", "Total confianza"],
         prompt: '<p id = "placeholder" style = "margin-bottom:50px;">Tu respuesta: 50</p>',
         button_label: "Continuar",
+        slider_width: 750,
         on_load: () => {
             document.addEventListener("input", (e) => {
                 let p = document.getElementById("placeholder");
@@ -704,7 +694,7 @@ const run_experiment = () => {
         choices: ["Salir del experimento"]
     }
 
-    timeline.push(check, consent_proc, procedure_cal, procedure_prac, procedure_exp, full_off, questions, if_download);
+    timeline.push(check, preload, consent_proc, procedure_cal, procedure_prac, cond_func, procedure_exp, full_off, questions, if_download);
 
     jsPsych.run(timeline);
 }

@@ -200,7 +200,6 @@ const set_attributes = (s, colors, targetOri) => {
 const draw_display = (radius, width, rho, log, colors, targetOri, phase, condition, jitters) => {
 
         // Function to gather information about WM trials
-        console.log(log);
         const getWM = (log, pos = false) => {
             let arrayPos;
             if (pos == "t") {
@@ -292,8 +291,6 @@ const draw_display = (radius, width, rho, log, colors, targetOri, phase, conditi
         arr.push(...stimuli);
     }
 
-    console.log(stimuli);
-
     return arr;
 }
 
@@ -344,7 +341,6 @@ const pickColor = (counterbalance) => {
     }
 }
 
-// Colors from: https://osf.io/6jhbt
 const color2hex = (color) => {
     switch (color) {
         case "gray":
@@ -403,14 +399,12 @@ const create_trials = (blocks, blocksWM, norew, prac = true, pracWM = true) => {
         if (!pracWM && phase.includes("WM_p")) continue;
         phaseLog[phase] = [];
     }
-    console.log(phaseLog)
     for (let j of Object.keys(phaseLog)) {
         if (!prac && j == "Practice") continue;
         if (blocks==0 && j == "Reward")continue;
         if (blocksWM==0 && j == "WM")continue;
         if (!pracWM && j.includes("WM_p")) continue;
         conditionLog = [];
-        console.log(j)
         blockN = (j.includes("WM"))? blocksWM: blocks;
         for (let i = 0; i < blockN; i++) {
             if (j == "Practice" && i === 0) {
@@ -421,9 +415,7 @@ const create_trials = (blocks, blocksWM, norew, prac = true, pracWM = true) => {
                 conditionLog = distractorAbsent;
                 break;
             }
-            console.log(j)
             if (j.includes("WM_p")) {
-                console.log("a")
                 const n = (j == "WM_p1")? 3: 10;
                 let AbsentDiff = zeros(Math.floor(n), 4); // All new colors
                 let AbsentSame = zeros(Math.floor(n), 4); // All new colors
@@ -521,7 +513,6 @@ const create_trials = (blocks, blocksWM, norew, prac = true, pracWM = true) => {
                 ));
         }
         phaseLog[j].push(conditionLog);
-        console.log(conditionLog)
     }
 
     // Object with the final structure:
@@ -681,7 +672,7 @@ const getCond = (N) => {
             .then(() => {console.log("Batch Session was successfully updated")
                                 console.log("condition: " + condition)
             })
-            .then(() => {if (counterS == counter_Number) jatos.batchSession.move("/pending/" + randomCond, "/finished/0")
+            .then(() => {if (counterS >= counter_Number) jatos.batchSession.move("/pending/" + randomCond, "/finished/0")
                 .then(() => console.log(condition + "has been removed from the pending list"))
                 .catch(() => {console.log("Problem with move")
                                      setTimeout(() => getCondition(), 1)});
@@ -705,4 +696,54 @@ const finishCond = () => {
         // })
         .catch(() => {console.log("Batch Session synchronization failed")
                              finshCond()});
+}
+
+// Function to end study or go to the next component
+const studyEnd = (href = null) => {
+    if (window.jatos) {
+        console.log(end);
+        if (end == false) finishCond();
+        const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
+        jatos.submitResultData(results)
+            .then((end)?jatos.endStudyAjax:jatos.startNextComponent)
+            .then(() => {if (href != null) window.location.href = href })
+            .catch(() => console.log("Something went wrong"));    
+    }
+}
+
+//Generate a random ID for participants
+const randomID = (num = 6, lett = 2) => {
+    let ID = '';
+    let tmp;
+    const letter = Array.from(Array(26)).map((e, i) => i + 65).map((x) => String.fromCharCode(x)); // Alphabet letters
+    for (let  i = 0; i < num; i++) {
+      tmp = random(0, 9).toString();
+      ID += tmp;
+    }
+    for (let i = 0; i < lett; i++) {
+        tmp = letter[random(0, letter.length - 1)];
+        ID += tmp
+    }
+    return ID;
+  };
+
+  const assign_condition = (url_cond) => {
+    if (jatos_run) {
+        condition = getCond(20);
+    } else {
+        condition = (url_cond != undefined) ? capitalize(urlvar.condition) : "A1";
+    }
+
+    if (jatos_run && !condition) {
+        timeline.push(limit);
+
+        jsPsych.run(timeline);
+
+    }
+
+    jsPsych.data.addProperties({
+        ID: ID,
+        group: condition[0],
+        amuont_checks: condition[1],
+    });
 }

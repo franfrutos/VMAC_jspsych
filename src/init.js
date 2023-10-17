@@ -10,7 +10,7 @@ const jsPsych = initJsPsych({
             finishCond();
             const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
             jatos.submitResultData(results)
-                .then(jatos.endStudy)
+                .then(jatos.startNextComponent)
                 .catch(() => console.log("Something went wrong"));    
         }
     }
@@ -30,5 +30,31 @@ const counterbalance = random(0, 6);
 
 console.log(`Counterbalance: ${counterbalance}`)
 
-var trialObj, order = 0, random_high_pos = random(1, 3), condition, not_consent = false;
+var trialObj, order = 0, random_high_pos = random(1, 3), condition, not_consent = false, ID;
+
+// Preload all images:
+
+const preload = {
+    type: jsPsychPreload,
+    images: [
+        'src/img/wm/diferente.jpg',
+        'src/img/wm/igual.jpg',
+        'src/img/wm/memory_test.jpg',
+        'src/img/wm/memory.jpg',
+        'src/img/wm/secuencia.jpg',
+        'src/img/dni.jpg',
+        'src/img/medals/MedalDisplay.jpg',
+        'src/img/medals/medal0.png',
+        'src/img/medals/medal1.png',
+        'src/img/medals/medal2.png',
+        'src/img/medals/medal3.png',
+        'src/img/medals/medal4.png',
+        'src/img/medals/medal5.png',
+    ],
+    max_load_time: 60000,
+    show_detailed_errors: true
+}
+
+
+
 

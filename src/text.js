@@ -352,7 +352,7 @@ const consentInf = {
         </p>
         <p><b>¿Qué procedimientos llevaré a cabo?</b><br>
         Su participación consistirá en contestar algunas preguntas y realizar sencillas tareas de ordenador en las que debe discriminar y responder a distintos estímulos mientras registramos el tiempo que tarda en emitir una respuesta a cada 
-        estímulo, así como la precisión de la misma. En total el experimento durará aproxamadamente 60 minutos.
+        estímulo, así como la precisión de la misma. En total el experimento durará aproxamadamente 60 minutos minutos.
         </p>
         <p><b>¿Tiene algún inconveniente participar en el estudio?</b><br>
         La tarea de ordenador no presenta ningún inconveniente para el participante, más allá del cansancio que éste pueda sentir por realizar una tarea monótona de ordenador.
@@ -361,7 +361,7 @@ const consentInf = {
         No, únicamente deberá realizar una tarea experimental en el ordenador.
         </p>
         <p><b>¿Tiene algún beneficio participar en el estudio?</b><br>
-        Este estudio no le producirá ningún beneficio directo, pero proporcionará conocimientos científicos sobre la cognición y la conducta humana. Además si el participante estudia el grado de Psicología, será recompensado con dos papeletas experimentales.
+        Este estudio no le producirá ningún beneficio directo, pero proporcionará conocimientos científicos sobre la cognición y la conducta humana. Además si el participante estudia una titulación que lo admita, se le bonificarán los 60 minutos que se estima que dura el experimento.
         </p>
         <p><b>Confidencialidad</b><br>
         Para proteger su privacidad, la información recogida sobre usted se etiquetará tan sólo con un código numérico. Sus resultados se almacenarán en papel o en formato electrónico, sin identificarle por el nombre, y se utilizarán solamente dentro del contexto del proyecto. Los resultados derivados de este estudio pueden publicarse en alguna revista científica o
@@ -542,10 +542,11 @@ const welcome = {
 const limit = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: wrapper(`<p>Si estás leyendo esto, es que se ha alcanzado el número de participantes deseado. Por tanto, ahora mismo no es posible participar en el estudio.</p>
-    <p>En el caso de que más adelante el estudio siga público en la página de SONA, podrás participar sin ningún problema.</p>
+    <p>En el caso de que más adelante el estudio siga público, podrás participar sin ningún problema.</p>
     <p>Cierra esta pestaña para abandonar el estudio.</p>`),
     choices: "NO_KEYS",
 };
+
 
 const out_consent = {
     type: jsPsychHtmlKeyboardResponse,
@@ -568,7 +569,7 @@ const demo_quests = {
         [
             {
                 type: 'multi-choice',
-                prompt: "¿Cuál es tu género?",
+                prompt: "¿Cuál de las siguientes opciones representa mejor tu género?",
                 name: 'gender',
                 options: ['Masculino', 'Femenino', 'No binario'],
                 required: true
@@ -584,25 +585,24 @@ const demo_quests = {
         ],
         [
             {
-                type: 'text',
-                prompt: "¿Cuál es tu Idioma Nativo?",
-                input_type: "text",
+                type: 'multi-choice',
+                prompt: "¿Cuál es tu idioma nativo?",
                 name: 'lenguage',
-                textbox_columns: 10,
+                options: ['Español', 'Otro'],
                 required: true,
             },
             {
                 type: 'multi-choice',
                 prompt: "En caso de que el español no sea tu idioma nativo, ¿Cuál es tu nivel de español?",
                 name: 'spanish_level',
-                options: ["B1 - Intermedio", "B2 - Intermedio alto", "C1 - Avanzado", "C2 - Maestría"],
+                options: ["B1 - Intermedio", "B2 - Intermedio alto", "C1 - Avanzado", "C2 - Maestría/Hablante nativo"],
                 required: false,
             },
         ],
         [
             {
                 type: 'multi-choice',
-                prompt: "¿Tienes problemas de visión?",
+                prompt: "¿Tienes algún problema de visión?",
                 name: 'vision',
                 options: ["No", "Sí, pero uso gafas y/o lentillas", "Sí, y no uso gafas y/o lentillas"],
                 required: true,
@@ -620,7 +620,51 @@ const demo_quests = {
     title: "Preguntas socio-demográficas",
     button_label_next: "Siguiente",
     button_label_back: "Anterior",
-    button_label_finish: "Terminar"
+    button_label_finish: "Terminar",
+    on_finish: (data) => {
+        jsPsych.data.addProperties({
+            gender: data.response.gender,
+            age: data.response.age,
+            lenguage: data.response.lenguage,
+            spanish_level: data.response.spanish_level,
+            vision: data.response.vision,
+            color_perception: data.response.color_perception
+        });
+        let stim_text, exclude = false;
+        if (data.response.vision == "Sí, y no uso gafas y/o lentillas") {
+            exclude = true;
+            stim_text = `
+            <p>Dado que has respondido que tienes problemas de visión y no usas gafas o lentillas, no podrás continuar con el experimento.</p>
+            <p>En caso de que hayas respondido erroneamente, cierra el experimento y vuelve a acceder al enlace del experimento. 
+            En caso contrario, no podrás participar en el experimento sin gafas o lentillas.</p>
+            `
+        }
+        if (data.response.color_perception == "Sí") {
+            exclude = true;
+            stim_text = `
+            <p>Dado que has respondido que tienes problemas en la percepción del color, no podrás continuar con el experimento.</p>
+            <p>En caso de que hayas respondido erroneamente, cierra el experimento y vuelve a acceder al enlace del experimento. 
+            En caso contrario, no podrás participar en el experimento.</p>
+            `
+        }
+        if (data.response.lenguage == "Otro" & data.response.lenguage != "C2 - Maestría/Hablante nativo") {
+            exclude = true;
+            stim_text = `
+            <p>Dado que has respondido que tu idioma nativo NO es el Español y que tu nivel de español no es de nativo, no podrás continuar con el experimento.</p>
+            <p>En caso de que hayas respondido erroneamente, cierra el experimento y vuelve a acceder al enlace del experimento. 
+            En caso contrario, no podrás participar en el experimento.</p>
+            `
+        }
+
+        if (exclude) {
+            const excluded_surv = {
+                type: jsPsychHtmlKeyboardResponse,
+                stimulus: wrapper(stim_text),
+                choices: "NO_KEYS",
+            };
+            jsPsych.run([excluded_surv]);
+        }
+    }
 };
 
  const consent_proc = {
@@ -692,7 +736,7 @@ const instructions_cal = {
     button_label_next: "Seguir",
     show_clickable_nav: true,
     on_load: () => {
-        let state = false;
+        //let state = false;
         // Animate ball instructions
         document.addEventListener("click", setBall);
         document.addEventListener("keydown", cal_c);
@@ -832,8 +876,7 @@ const instructions_exp = {
         const urlvar = (jatos_run) ? jatos.urlQueryParameters : jsPsych.data.urlVariables();
         const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
         const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
-        const gam = urlvar.gamify =="true" || false;
-        const condition = (urlvar.condition != undefined)? capitalize(urlvar.condition): "A1";
+        const gam = true;
 
         let out = [
             wrapper(`<p>Has terminado la práctica, ¡muy bien!</p>
@@ -853,7 +896,7 @@ const instructions_exp = {
             (gam)?wrapper(`
             <p>La cantidad de puntos que ganes se traducirá en la obtención de diferentes medallas que irás desbloqueando conforme avance el experimento:</p>
             <img src="src/img/medals/MedalDisplay.jpg" width="700" height="165">
-            <p>Los puntos necesarios para ganar cada medalla están calibrados sobre la base de estudios previos, por lo que al final del experimento te informaremos cómo de bien lo has hecho respecto a otros participantes.</p>`): 
+            <p>Los puntos necesarios para ganar cada medalla están calibrados sobre la base de estudios previos, por lo que al final del experimento (después de la tarea de memoria) te informaremos cómo de bien lo has hecho respecto a otros participantes.</p>`): 
             null,
             wrapper(`<p>Todo lo demás seguirá siendo exactamente igual. Tu tarea consistirá en <b>determinar la orientación de la línea que se encuentra dentro del rombo</b>.</p>
             <div style = "display: flex; flex-direction: row; justify-content: space-around; margin-top: 30px;">
@@ -907,7 +950,6 @@ const pre_exp = {
         const urlvar = (jatos_run) ? jatos.urlQueryParameters : jsPsych.data.urlVariables();
         const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
         if (blocks == 0) {
-            console.log("a")
             document.body.classList.remove("black");
             document.body.style.cursor = 'auto';  
         }
@@ -920,7 +962,6 @@ const slider_instr = {
     stimulus: () => {
         const urlvar = (jatos_run) ? jatos.urlQueryParameters : jsPsych.data.urlVariables();
         const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
-        const condition = (urlvar.condition != undefined)? capitalize(urlvar.condition): "A1";
         const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
         return wrapper(`
         <p>Antes de ${(order == 1)?`continuar`:`terminar`}, te vamos a ${(order == 2 && condition.includes("2"))?`volver a `:``}realizar una breve pregunta sobre el experimento.</p>
@@ -1011,7 +1052,6 @@ const instructions_wm = {
     on_finish: () => {
         cont = false;
         fail = true;
-        console.log(fail, cont)
     },
     allow_keys: false,
     button_label_previous: "Retroceder",
@@ -1051,9 +1091,9 @@ const questions = {
     <label class="statement">¿Tienes algún comentario respecto al experimento? Puedes expresar tu opinión debajo:</label>
     <textarea id="text" name="opinion" rows="5" cols="80" style = "display: block" placeholder="Creo que el experimento..."></textarea> </br>
     </div>
-    <p style="display: block; margin-bottom: 50px">Una vez que hayas respondido a las preguntas, pulsa ${(lab) ? `<b>continuar</b>` : `<b>terminar</b> para salir del experimento`}.</p>`,
+    <p style="display: block; margin-bottom: 50px">Una vez que hayas respondido a las preguntas, pulsa ${(lab) ? `<b>continuar</b>` : `<b>continuar</b> para que registremos tu participación en el experimento`}.</p>`,
     button_label: () => {
-        return (lab) ? "Continuar" : "Terminar";
+        return (lab) ? "Continuar" : "Continuar";
     },
     on_finish: (data) => {
         jsPsych.data.addProperties({

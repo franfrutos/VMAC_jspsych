@@ -99,3 +99,8 @@ textarea {
     resize: none;
     padding: 10px;
 }
+
+#emailInput {
+  padding: 4px 4px;
+  margin-bottom: 20px;
+}
