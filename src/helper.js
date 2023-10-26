@@ -255,15 +255,10 @@ const draw_display = (radius, width, rho, log, colors, targetOri, phase, conditi
             new_colors[pos_s] = (condition == "High") ? colors[0] : colors[1];
         } else pos_s = -1
         pos_t = getWM(log, pos = "t");
-        console.log("target:",pos_t, new_colors[pos_t]);
-        console.log("Singleton pos:", pos_s, (pos_s>= 0)? new_colors[pos_s]: "none");
-        console.log("Distractor:", getWM(log, "d"));
-        console.log("Change:", targetOri);
         t1 = (phase == "WM_p1")? 3000: 500;
         isi = 1000;
         memory_time = [jitters[0] + isi, jitters[0] + t1 +isi];
         test_time = memory_time[1] + jitters[1];
-    
     }
 
     for (let i = 0; i < n_display; i++) {
