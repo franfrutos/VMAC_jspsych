@@ -310,7 +310,7 @@ const run_experiment = () => {
 
     const reward = {
         timeline: [trial, feedback, if_nodeRest],
-        timeline_variables: (blocks != 0) ? trialObj.Reward : [],
+        timeline_variables: (blocks != 0) ? trialObj.Rewarded : [],
         repetitions: 1,
         randomize_order: false,
         post_trial_gap: () => {
