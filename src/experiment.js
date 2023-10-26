@@ -23,7 +23,7 @@ const run_experiment = () => {
 
 
     trialObj = create_trials(blocks, blocksWM, norew, prac, pracWM);
-    const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
+    const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Rewarded"][1].colors : ["orange", "blue"];
     if (blocks != 0) console.log(`Color high is ${colorHigh}. Color low is ${colorLow}.`)
     ID = (urlvar.ID != undefined)? urlvar.ID: randomID();
     if (jatos_run) jatos.studySessionData.subjID = ID; // Saving ID for the next component
@@ -82,7 +82,7 @@ const run_experiment = () => {
                 sPos: jsPsych.timelineVariable("singPos"),
                 Phase: (jsPsych.timelineVariable("Phase").includes("WM_p")) ? "Practice WM" : jsPsych.timelineVariable("Phase"),
                 condition: jsPsych.timelineVariable("condition"),
-                Block_num: ((trialNum % 24 == 0 && jsPsych.timelineVariable("Phase").includes("Reward")) ||
+                Block_num: ((trialNum % 24 == 0 && jsPsych.timelineVariable("Phase").includes("Rewarded")) ||
                  (trialNum % 20 == 0 && jsPsych.timelineVariable("Phase").includes("WM"))) ? ++BlockNum : BlockNum,
                 trial_num: ++trialNum,
                 type_WM:  (jsPsych.timelineVariable("Phase").includes("WM")) ? jsPsych.timelineVariable("trial_type") : "none",
@@ -155,7 +155,7 @@ const run_experiment = () => {
         },
         post_trial_gap: () => {
             const phase = jsPsych.data.get().last(1).values()[0].Phase;
-            if ((phase == "Practice" && trialNum == 24) || (phase != "Reward" && trialNum == (24 * blocks) * 2)) return 1000;
+            if ((phase == "Practice" && trialNum == 24) || (phase != "Rewarded" && trialNum == (24 * blocks) * 2)) return 1000;
         },
         trial_duration: 700,
         choices: ["NO_KEYS"],
@@ -166,7 +166,7 @@ const run_experiment = () => {
                     return 1000;
                 }
             }
-            if (phase == "Reward") {
+            if (phase == "Rewarded") {
                 if (blocks * 24 == trialNum) {
                     return 1000;
                 }
@@ -188,7 +188,7 @@ const run_experiment = () => {
                     document.body.style.cursor = 'auto';
                 }
             }
-            if (phase == "Reward") {
+            if (phase == "Rewarded") {
                 if (blocks * 24 == trialNum) {
                     document.body.classList.remove("black");
                     document.body.style.cursor = 'auto';
@@ -426,9 +426,9 @@ const run_experiment = () => {
         stimulus: () => {
             if (!fail && phase_out == "VMAC") {
                 return wrapper(`<p>Ahora va a empezar al experimento.</p>
-                   <p>El experimento va a constar de dos fases, una con ${`${blocks.toString()} bloque${(blocks > 1) ? `s` : ``}`} de 24 ensayos (25 minutos) y otra con ${`${blocksWM.toString()} bloque${(blocks > 1) ? `s` : ``}`} de 20 ensayos (30 minutos).</p>
+                   <p>El experimento va a constar de dos fases, una con ${`${blocks.toString()} bloque${(blocks > 1) ? `s` : ``}`} de 24 ensayos (25 minutos) y otra con ${`${blocksWM.toString()} bloque${(blocks > 1) ? `s` : ``}`} de 20 ensayos (35 minutos).</p>
                    <p>Entre bloques podrás descansar si lo necesitas.</p>
-                   <p>La duración aproximada del experimento será de unos 55 minutos.</p>
+                   <p>La duración aproximada del experimento será de unos 60 minutos.</p>
                    <p>Pulsa comenzar para empezar el experimento.</p>`, true)
             } else if (!fail && phase_out == "WM") {
                 return `<p>¡Has respondido correctamente a todas las preguntas! <p>

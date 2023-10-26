@@ -175,7 +175,7 @@ const exp_c = () => {
     const c = document.getElementById("myCanvas1");
     const urlvar = (jatos_run) ? jatos.urlQueryParameters : jsPsych.data.urlVariables();
     const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
-    const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
+    const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Rewarded"][1].colors : ["orange", "blue"];
     if (c!= null && state) state = false;
     else state = true;
     if (c) {
@@ -247,7 +247,7 @@ const slider_c = () => {
 
     const urlvar = (jatos_run) ? jatos.urlQueryParameters : jsPsych.data.urlVariables();
     const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
-    const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
+    const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Rewarded"][1].colors : ["orange", "blue"];
 
     let [ctx1, ctx2] = [c1.getContext("2d"), c2.getContext("2d")];
 
@@ -846,8 +846,8 @@ const instructions_prac = {
 const pre_prac = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `<p>Estas a punto de empezar la práctica, recuerda:</p>
-    <p><b>Si la línea en el interior del diamante es horizontal, pulsa B</b>.</p>
-    <p><b>Si la línea en el interior del diamante es vertical, pulsa J</b>.</p>
+    <p><b>Si la línea en el interior del rombo es horizontal, pulsa B</b>.</p>
+    <p><b>Si la línea en el interior del rombo es vertical, pulsa J</b>.</p>
     <p>Pulsa la barra espaciadora para empezar la práctica.</p>`,
     choices: [' '],
     on_finish: () => {
@@ -875,12 +875,12 @@ const instructions_exp = {
     pages: () => {
         const urlvar = (jatos_run) ? jatos.urlQueryParameters : jsPsych.data.urlVariables();
         const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
-        const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
+        const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Rewarded"][1].colors : ["orange", "blue"];
         const gam = true;
 
         let out = [
             wrapper(`<p>Has terminado la práctica, ¡muy bien!</p>
-            <p>En el experimento van a cambiar algunas respecto a lo que has hecho en la práctica.</p>
+            <p>En el experimento van a cambiar algunas cosas respecto a lo que has hecho en la práctica.</p>
             <p>En primer lugar, en función de tu desempeño, en la tarea <b>podrás ganar o perder una determinada cantidad de puntos</b> en cada ensayo. Si respondes correctamente ganarás puntos, mientras que si fallas perderás puntos. 
             Por otro lado, cuanto más rápido respondas, más puntos ganarás (si la respuesta es correcta) o perderás (si no lo es), mientras que si respondes con mayor lentitud la cantidad de puntos ganados será menor. Si tardas demasiado en contestar o cometes errores ganarás menos puntos.</p>
             <p>Por tanto, para maximizar la cantidad de puntos que es posible obtener, intenta responder lo más rápido que puedas sin cometer errores.</p>`),
@@ -892,7 +892,7 @@ const instructions_exp = {
             ${(condition.includes("A"))?`<p><b>El color de los círculos influirá en la cantidad de puntos que puedes ganar</b>.</p>
             <p>Si el círculo se presenta en color <b>${colors_t(colorHigh)}</b> <b>ganarás (o perderás) 10 veces más puntos</b> de lo habitual.</p>
             <p>En el caso de que uno de los círculos aparezca de color <b>${colors_t(colorLow)}</b> no ganarás ni perderás puntos extra.</p>`:``}
-            <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del diamante. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
+            <p>Sin embargo, tu tarea sigue siendo la misma: discriminar la orientación de la línea en el interior del rombo. Atender a los círculos solo perjudicará lo bien que hagas la tarea, por lo que <b>trata de ignorar el color de los círculos</b>.</p>`),
             (gam)?wrapper(`
             <p>La cantidad de puntos que ganes se traducirá en la obtención de diferentes medallas que irás desbloqueando conforme avance el experimento:</p>
             <img src="src/img/medals/MedalDisplay.jpg" width="700" height="165">
@@ -936,8 +936,8 @@ const instructions_exp = {
 const pre_exp = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `<p>Estas a punto de empezar el experimento, recuerda:</p>
-    <p><b>Si la línea en el interior del diamante es horizontal, pulsa B</b>.</p>
-    <p><b>Si la línea en el interior del diamante es vertical, pulsa J</b>.</p>
+    <p><b>Si la línea en el interior del rombo es horizontal, pulsa B</b>.</p>
+    <p><b>Si la línea en el interior del rombo es vertical, pulsa J</b>.</p>
     <p>Pulsa la barra espaciadora para empezar el experimento.</p>`,
     choices: [' '],
     post_trial_gap: () => {
@@ -962,7 +962,7 @@ const slider_instr = {
     stimulus: () => {
         const urlvar = (jatos_run) ? jatos.urlQueryParameters : jsPsych.data.urlVariables();
         const blocks = (Number(urlvar.blocks) == 0) ? 0 : (!isNaN(Number(urlvar.blocks))) ? Number(urlvar.blocks) : 12;
-        const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Reward"][1].colors : ["orange", "blue"];
+        const [colorHigh, colorLow] = (blocks != 0) ? trialObj["Rewarded"][1].colors : ["orange", "blue"];
         return wrapper(`
         <p>Antes de ${(order == 1)?`continuar`:`terminar`}, te vamos a ${(order == 2 && condition.includes("2"))?`volver a `:``}realizar una breve pregunta sobre el experimento.</p>
         ${(condition.includes('A'))?`<p>Como sabes, la cantidad de puntos que podías ganar en la tarea que${(order == 1)?` acabas de realizar`:

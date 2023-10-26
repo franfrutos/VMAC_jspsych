@@ -390,18 +390,18 @@ const color2hex = (color) => {
 const create_trials = (blocks, blocksWM, norew, prac = true, pracWM = true) => {
     if (blocks == 0 && blocksWM == 0) return;
     let distractorAbsent, distractorHigh, distractorLow, conditionLog, trials, blockN;
-    const phases = ["Practice", "Reward", "WM_p1", "WM_p2", norew];
+    const phases = ["Practice", "Rewarded", "WM_p1", "WM_p2", norew];
     let phaseLog = {};
     for (let phase of phases) {
         if (!prac && phase == "Practice") continue;
-        if (blocks==0 && phase == "Reward")continue;
+        if (blocks==0 && phase == "Rewarded")continue;
         if (blocksWM==0 && phase == "WM")continue;
         if (!pracWM && phase.includes("WM_p")) continue;
         phaseLog[phase] = [];
     }
     for (let j of Object.keys(phaseLog)) {
         if (!prac && j == "Practice") continue;
-        if (blocks==0 && j == "Reward")continue;
+        if (blocks==0 && j == "Rewarded")continue;
         if (blocksWM==0 && j == "WM")continue;
         if (!pracWM && j.includes("WM_p")) continue;
         conditionLog = [];
