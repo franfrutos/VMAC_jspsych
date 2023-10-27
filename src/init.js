@@ -8,7 +8,7 @@ const jsPsych = initJsPsych({
     on_finish: () => {
         if (window.jatos) {
             finishCond();
-            const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }, { trial_type: "html-slider-response" }]).json();
+            const results = jsPsych.data.get().filter([{ trial_type: "psychophysics" }, { trial_type: "survey-html-form" }]).json();
             jatos.submitResultData(results)
                 .then(jatos.startNextComponent)
                 .catch(() => console.log("Something went wrong"));    
