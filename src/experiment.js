@@ -30,6 +30,12 @@ const run_experiment = () => {
 
     console.log("ID: " + ID);
 
+    // Check if there is conditions in the pending list
+    const check_cond = {
+        type: jsPsychCallFunction,
+        func: () => check_limit(),
+    }
+
     // Assign condition after VMAC practice is finished:
     const cond_func = {
         type: jsPsychCallFunction,
@@ -694,7 +700,7 @@ const run_experiment = () => {
         choices: ["Salir del experimento"]
     }
 
-    timeline.push(check, preload, consent_proc, procedure_cal, procedure_prac, cond_func, procedure_exp, full_off, questions, if_download);
+    timeline.push(check_cond, check, preload, consent_proc, procedure_cal, procedure_prac, cond_func, procedure_exp, full_off, questions, if_download);
 
     jsPsych.run(timeline);
 }

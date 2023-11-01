@@ -730,10 +730,7 @@ const randomID = (num = 6, lett = 2) => {
     }
 
     if (jatos_run && !condition) {
-        timeline.push(limit);
-
-        jsPsych.run(timeline);
-
+        jsPsych.run([limit]);
     }
 
     jsPsych.data.addProperties({
@@ -741,4 +738,12 @@ const randomID = (num = 6, lett = 2) => {
         group: condition[0],
         amuont_checks: condition[1],
     });
+}
+
+const check_limit = () => {
+    if (jatos_run) {
+        if (jatos.batchSession.get("pending") == 0) {
+            jsPsych.run([limit]);
+        }
+    }
 }
